@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">weather-api</string>
+    <string name="city">City</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="get_weather">Get Weather</string>
+    <string name="weather">Weather</string>
 </resources>

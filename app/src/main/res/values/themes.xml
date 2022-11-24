@@ -12,5 +12,27 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        
+        <item name="textInputStyle">@style/GlobalTextInputStyle</item>
+        <item name="buttonStyle">@style/GlobalButtonStyle</item>
+        <item name="android:textViewStyle">@style/GlobalTextViewStyle</item>
     </style>
+
+
+
+    <style name="GlobalTextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:minWidth">@dimen/big_width</item>
+    </style>
+
+    <style name="GlobalButtonStyle" parent="Widget.MaterialComponents.Button">
+    </style>
+
+    <style name="GlobalButtonStyle.Big">
+        <item name="android:minWidth">@dimen/big_width</item>
+    </style>
+
+    <style name="GlobalTextViewStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:minWidth">@dimen/big_width</item>
+    </style>
+
 </resources>
