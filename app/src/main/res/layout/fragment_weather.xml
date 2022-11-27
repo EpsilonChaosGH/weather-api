@@ -4,27 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".app.screens.main.weather.WeatherFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/contentStart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/contentEnd"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/cityInputText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_space"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:hint="@string/city"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cityTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/city" />
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -32,15 +50,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium_space"
+            android:hint="@string/latitude"
             app:layout_constraintBottom_toTopOf="@+id/longitudeInputText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
             app:layout_constraintTop_toBottomOf="@+id/cityInputText">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/latitude" />
+                android:imeOptions="actionNext"
+                android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -48,15 +68,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium_space"
+            android:hint="@string/longitude"
             app:layout_constraintBottom_toTopOf="@+id/getWeatherButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
             app:layout_constraintTop_toBottomOf="@+id/latitudeInputText">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/longitude" />
+                android:imeOptions="actionDone"
+                android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -67,8 +89,8 @@
             android:layout_marginTop="@dimen/medium_space"
             android:text="@string/get_weather"
             app:layout_constraintBottom_toTopOf="@+id/weatherTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
             app:layout_constraintTop_toBottomOf="@+id/longitudeInputText" />
 
         <TextView
@@ -79,8 +101,21 @@
             android:text="@string/weather"
             android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/progressBar"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
             app:layout_constraintTop_toBottomOf="@+id/getWeatherButton" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/contentEnd"
+            app:layout_constraintStart_toStartOf="@+id/contentStart"
+            app:layout_constraintTop_toBottomOf="@+id/weatherTextView">
+
+        </ProgressBar>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
