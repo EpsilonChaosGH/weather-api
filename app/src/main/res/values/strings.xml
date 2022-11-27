@@ -5,4 +5,10 @@
     <string name="longitude">Longitude</string>
     <string name="get_weather">Get Weather</string>
     <string name="weather">Weather</string>
+
+    <string name="connection_error">Can\'t connect to the server</string>
+    <string name="invalid_api_key">Invalid API key</string>
+    <string name="internal_error">Internal error! Please try again later.</string>
+    <string name="field_is_empty">Field is empty</string>
+    <string name="city_not_found_exception">City not found</string>
 </resources>
