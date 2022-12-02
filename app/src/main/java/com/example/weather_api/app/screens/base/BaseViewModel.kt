@@ -26,6 +26,14 @@ open class BaseViewModel(
     private val _showErrorMessageEvent = MutableLiveEvent<String>()
     val showErrorMessageEvent = _showErrorMessageEvent.share()
 
+    fun showToast(message: Int) {
+        _showErrorMessageResEvent.publishEvent(message)
+    }
+
+    fun showToastString(message: String) {
+        _showErrorMessageEvent.publishEvent(message)
+    }
+
     fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) {
         viewModelScope.launch {
             try {
