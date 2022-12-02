@@ -28,24 +28,28 @@ data class GetWeatherResponseEntity(
     )
 
     data class Main(
+        @field:Json(name = "temp")
         val temp: Double,
 
-        @Json(name = "feels_like")
+        @field:Json(name = "feels_like")
         val feelsLike: Double,
 
-        @Json(name = "temp_min")
+        @field:Json(name = "temp_min")
         val tempMin: Double,
 
-        @Json(name = "temp_max")
+        @field:Json(name = "temp_max")
         val tempMax: Double,
 
+        @field:Json(name = "pressure")
         val pressure: Long,
+
+        @field:Json(name = "humidity")
         val humidity: Long,
 
-        @Json(name = "sea_level")
+        @field:Json(name = "sea_level")
         val seaLevel: Long,
 
-        @Json(name = "grnd_level")
+        @field:Json(name = "grnd_level")
         val grndLevel: Long
     )
 

@@ -6,9 +6,28 @@
     <string name="get_weather">Get Weather</string>
     <string name="weather">Weather</string>
 
+
+    <string name="action_search">Search</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="search_by_city">Search by city</string>
+    <string name="open">Open</string>
+    <string name="gps_not_found">GPS not found</string>
+    <string name="permissions_denied">Permissions denied</string>
+    <string name="permission_grated">Permission grated</string>
+    <string name="permissions_denied_forever">Permissions denied forever</string>
     <string name="connection_error">Can\'t connect to the server</string>
     <string name="invalid_api_key">Invalid API key</string>
     <string name="internal_error">Internal error! Please try again later.</string>
     <string name="field_is_empty">Field is empty</string>
     <string name="city_not_found_exception">City not found</string>
+    <string name="current_city">Current City</string>
+    <string name="temperature">Temperature</string>
+    <string name="feels_like">Feels like</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="current_weather">Clouds</string>
+    <string name="temperature_test">-17</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="c">°C</string>
+    <string name="enter_your_city">Enter your city</string>
 </resources>

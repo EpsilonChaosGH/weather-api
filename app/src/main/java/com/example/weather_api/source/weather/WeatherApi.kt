@@ -9,6 +9,16 @@ interface WeatherApi {
     suspend fun getWeatherByCity(
         @Query("q") city: String,
         @Query("appid") appId: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String
+    ): GetWeatherResponseEntity
+
+    @POST("weather?")
+    suspend fun getWeatherByCoordinates(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("appid") appId: String,
+        @Query("units") units: String,
+        @Query("lang") lang: String
     ): GetWeatherResponseEntity
 }
