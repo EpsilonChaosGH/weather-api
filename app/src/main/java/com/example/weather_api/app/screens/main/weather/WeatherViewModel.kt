@@ -2,7 +2,6 @@ package com.example.weather_api.app.screens.main.weather
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_api.R
 import com.example.weather_api.app.Singletons
 import com.example.weather_api.app.model.EmptyFieldException
 import com.example.weather_api.app.model.Field
@@ -24,10 +23,18 @@ class WeatherViewModel(
     val state = _state.share()
 
 
-    fun getWeatherByCity() = viewModelScope.safeLaunch {
+    init {
+        getWeatherByCity(weatherRepository.getCurrentCity())
+    }
+
+    fun getWeatherByCity(city: String) = viewModelScope.safeLaunch {
         showProgress()
         try {
-            setState(weatherRepository.getWeatherByCity(City(weatherRepository.getCurrentCity())))
+            val response = weatherRepository.getWeatherByCity(City(city))
+            setState(response)
+            weatherRepository.setCurrentCity(response.name)
+        } catch (e: EmptyFieldException) {
+            emptyFieldException(e)
         } finally {
             hideProgress()
         }
@@ -39,10 +46,15 @@ class WeatherViewModel(
             val response = weatherRepository.getWeatherByCoordinates(coordinates)
             setState(response)
             weatherRepository.setCurrentCity(response.name)
-            showToastString(response.name)
         } finally {
             hideProgress()
         }
+    }
+
+    private fun emptyFieldException(e: EmptyFieldException) {
+        _state.value = _state.requireValue().copy(
+            emptyCityError = e.field == Field.City
+        )
     }
 
     private fun setState(weather: GetWeatherResponseEntity) {

@@ -2,6 +2,7 @@ package com.example.weather_api.app.screens.main.weather
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -9,16 +10,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.example.weather_api.R
 import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
-import com.example.weather_api.app.utils.publishEvent
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -40,17 +41,37 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         binding = FragmentWeatherBinding.bind(view)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-
-        binding.locationImageView.setOnClickListener {
+        binding.locationImageButton.setOnClickListener {
             getWeatherByCoordinates()
         }
 
-        binding.searchImageView.setOnClickListener {
-            findNavController().navigate(R.id.action_weatherFragment_to_searchByCityFragment)
+        binding.searchImageButton.setOnClickListener {
+            if (binding.cityTextInput.visibility == View.VISIBLE) {
+                binding.cityTextInput.visibility = View.GONE
+            } else {
+                binding.cityTextInput.visibility = View.VISIBLE
+                showSoftKeyboard(binding.cityEditText)
+            }
         }
 
-        viewModel.getWeatherByCity()
+        binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                getWeatherByCity(binding.cityEditText.text.toString())
+                return@OnEditorActionListener true
+            }
+            false
+        })
+
         observeState()
+    }
+
+    private fun getWeatherByCity(city: String) {
+        viewModel.getWeatherByCity(city)
+        if (viewModel.state.value?.emptyCityError == true) {
+            showSoftKeyboard(binding.cityEditText)
+        } else {
+            binding.cityTextInput.visibility = View.GONE
+        }
     }
 
     private fun getWeatherByCoordinates() {
@@ -95,17 +116,21 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) {
 
-            binding.searchImageView.isEnabled = it.enableViews
-            binding.locationImageView.isEnabled = it.enableViews
+            binding.cityEditText.error =
+                if (it.emptyCityError) getString(R.string.field_is_empty) else null
+
+            binding.cityTextInput.isEnabled = it.enableViews
+            binding.locationImageButton.isEnabled = it.enableViews
+            binding.searchImageButton.isEnabled = it.enableViews
 
             binding.cityNameTextView.text = it.cityName
             binding.countryTextView.text = it.country
             binding.temperatureTextView.text = it.temperature
             binding.currentWeatherTextView.text = it.mainWeather
-            binding.feelsLikeTextView.text = it.feelsLike
-            binding.humidityTextView.text = it.humidity
-            binding.pressureTextView.text = it.pressure
-            binding.windSpeedTextView.text = it.windSpeed
+            binding.feelsLikeTextView.text = "${it.feelsLike}°"
+            binding.humidityTextView.text = "${it.humidity} %"
+            binding.pressureTextView.text = "${it.pressure} hPa"
+            binding.windSpeedTextView.text = "${it.windSpeed} m/s"
 
             binding.progressBar.visibility = if (it.showProgress) View.VISIBLE else View.INVISIBLE
         }
@@ -132,5 +157,19 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 .create()
                 .show()
         }
+    }
+
+    private fun showSoftKeyboard(view: View) {
+        if (view.requestFocus()) {
+            val imm =
+                requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun hideKeyboardFrom(view: View?) {
+        val imm =
+            requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }
