@@ -10,20 +10,8 @@
         android:name="com.example.weather_api.app.screens.main.weather.WeatherFragment"
         android:label="Weather"
         tools:layout="@layout/fragment_weather">
-        <action
-            android:id="@+id/action_weatherFragment_to_searchByCityFragment"
-            app:destination="@id/searchByCityFragment" />
         <argument
             android:name="City"
             app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/searchByCityFragment"
-        android:name="com.example.weather_api.app.screens.main.weather.SearchByCityFragment"
-        android:label="Search By City"
-        tools:layout="@layout/fragment_search_by_city">
-        <action
-            android:id="@+id/action_searchByCityFragment_to_weatherFragment"
-            app:destination="@id/weatherFragment" />
     </fragment>
 </navigation>

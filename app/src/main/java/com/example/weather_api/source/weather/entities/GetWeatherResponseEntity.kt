@@ -1,6 +1,9 @@
 package com.example.weather_api.source.weather.entities
 
+import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.squareup.moshi.Json
+import java.sql.Date
+import java.util.*
 
 data class GetWeatherResponseEntity(
     val coord: Coord,
@@ -72,5 +75,18 @@ data class GetWeatherResponseEntity(
         val speed: Double,
         val deg: Long,
         val gust: Double
+    )
+
+    fun toWeather(): WeatherEntity = WeatherEntity(
+        cityName = name,
+        country = sys.country,
+        temperature = main.temp,
+        mainWeather = weather.firstOrNull()?.main ?: "error",
+        description = weather.firstOrNull()?.description ?: "error",
+        feelsLike = main.feelsLike,
+        humidity = main.humidity,
+        pressure = main.pressure,
+        windSpeed = wind.speed,
+        data = Date((dt + timezone) * 1000)
     )
 }

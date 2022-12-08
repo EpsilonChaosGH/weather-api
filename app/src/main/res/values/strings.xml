@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">weather-api</string>
+    <string name="app_name">Weather</string>
     <string name="city">City</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
@@ -30,4 +30,8 @@
     <string name="pressure">Pressure</string>
     <string name="c">°C</string>
     <string name="enter_your_city">Enter your city</string>
+    <string name="_11_00">11:00</string>
+    <string name="my_location">myLocation</string>
+    <string name="search">Search</string>
+    <string name="tue_8_december_15_00">Tue, 8 December 15:00</string>
 </resources>
