@@ -19,11 +19,8 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         binding = FragmentSplashBinding.bind(view)
 
         lifecycleScope.launchWhenCreated {
-            delay(1000)
             val intent = Intent(requireContext(), MainActivity::class.java)
-
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
             startActivity(intent)
         }
     }
