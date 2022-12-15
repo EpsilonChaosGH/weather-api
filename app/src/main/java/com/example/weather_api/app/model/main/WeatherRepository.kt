@@ -8,8 +8,11 @@ import com.example.weather_api.app.model.settings.AppSettings
 import com.example.weather_api.app.model.wrapBackendExceptions
 import com.example.weather_api.source.weather.entities.GetWeatherForecastResponseEntity
 import com.example.weather_api.source.weather.entities.GetWeatherResponseEntity
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WeatherRepository(
+@Singleton
+class WeatherRepository @Inject constructor(
     private val weatherSource: WeatherSource,
     private val appSettings: AppSettings
 ) {
@@ -31,6 +34,12 @@ class WeatherRepository(
         }
     }
 
+    suspend fun getWeatherForecastByCity(city: City): List<WeatherEntity> =
+        wrapBackendExceptions {
+            if (city.cityName.isBlank()) throw EmptyFieldException(Field.City)
+            return weatherSource.getWeatherForecastByCity(city)
+        }
+
     suspend fun getWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
         wrapBackendExceptions {
             return weatherSource.getWeatherByCoordinates(coordinates)
@@ -39,10 +48,5 @@ class WeatherRepository(
     suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates): List<WeatherEntity> =
         wrapBackendExceptions {
             return weatherSource.getWeatherForecastByCoordinates(coordinates)
-        }
-
-    suspend fun getWeatherForecastByCity(city: City): List<WeatherEntity> =
-        wrapBackendExceptions {
-            return weatherSource.getWeatherForecastByCity(city)
         }
 }

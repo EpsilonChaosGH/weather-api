@@ -2,9 +2,13 @@ package com.example.weather_api.app.model.settings
 
 import android.content.Context
 import com.example.weather_api.app.model.settings.AppSettings.Companion.NO_CITY
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SharedPreferencesAppSettings(
-    appContext: Context
+@Singleton
+class SharedPreferencesAppSettings @Inject constructor(
+    @ApplicationContext appContext: Context
 ) : AppSettings {
 
     private val sharedPreferences =

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Weatherapi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Weatherapi" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryVariant">@color/black</item>
@@ -10,13 +10,14 @@
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
 
         <item name="textInputStyle">@style/GlobalTextInputStyle</item>
         <item name="buttonStyle">@style/GlobalButtonStyle</item>
         <item name="android:textViewStyle">@style/GlobalTextViewStyle</item>
     </style>
+
 
     <style name="SplashActivity" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/sky_bg</item>
@@ -42,11 +43,27 @@
 
     </style>
 
+
+    <style name="WeatherIconImageView">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+
     <style name="TitleTextView">
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">28sp</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="WeatherDetailsTextView">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lines">1</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 

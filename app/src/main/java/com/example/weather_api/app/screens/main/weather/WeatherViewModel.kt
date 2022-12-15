@@ -3,7 +3,6 @@ package com.example.weather_api.app.screens.main.weather
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_api.app.Singletons
 import com.example.weather_api.app.model.EmptyFieldException
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.app.model.main.WeatherRepository
@@ -12,16 +11,18 @@ import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.example.weather_api.app.screens.base.BaseViewModel
 import com.example.weather_api.app.utils.*
-import com.example.weather_api.app.utils.logger.LogCatLogger
 import com.example.weather_api.app.utils.logger.Logger
-import com.example.weather_api.source.weather.entities.GetWeatherResponseEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class WeatherViewModel(
-    weatherRepository: WeatherRepository = Singletons.weatherRepository,
-    logger: Logger = LogCatLogger
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+    weatherRepository: WeatherRepository,
+    logger: Logger
 ) : BaseViewModel(weatherRepository, logger) {
 
     private val _state = MutableLiveData(State())
@@ -31,55 +32,66 @@ class WeatherViewModel(
     val forecastState = _forecastState.share()
 
     init {
-        getWeatherByCity(City(weatherRepository.getCurrentCity()))
+        getWeatherAndWeatherForecastByCity(City(weatherRepository.getCurrentCity()))
     }
 
-    fun getWeatherByCity(city: City) = viewModelScope.safeLaunch {
-        showProgress()
-        try {
-            val response = weatherRepository.getWeatherByCity(city)
-            getWeatherForecastByCity(city)
-            setState(response)
-            weatherRepository.setCurrentCity(response.cityName)
-        } catch (e: EmptyFieldException) {
-            emptyFieldException(e)
-        } finally {
-            hideProgress()
-        }
-    }
-
-    fun getWeatherByCoordinates(coordinates: Coordinates) = viewModelScope.safeLaunch {
-        showProgress()
-        try {
-            val response = weatherRepository.getWeatherByCoordinates(coordinates)
-            getWeatherForecastByCoordinates(coordinates)
-            setState(response)
-            weatherRepository.setCurrentCity(response.cityName)
-        } finally {
-            hideProgress()
-        }
-    }
-
-    private fun getWeatherForecastByCity(city: City) = viewModelScope.safeLaunch {
-        showProgress()
-        try {
-            val response = weatherRepository.getWeatherForecastByCity(city)
-            _forecastState.value = response
-        } finally {
-            hideProgress()
-        }
-    }
-
-    private fun getWeatherForecastByCoordinates(coordinates: Coordinates) =
-        viewModelScope.safeLaunch {
+    fun getWeatherAndWeatherForecastByCity(city: City) =
+        viewModelScope.launch {
             showProgress()
-            try {
-                val response = weatherRepository.getWeatherForecastByCoordinates(coordinates)
-                _forecastState.value = response
-            } finally {
-                hideProgress()
+            val weatherJob = safeLaunch {
+                try {
+                    getWeatherByCity(city)
+                } catch (e: EmptyFieldException) {
+                    emptyFieldException(e)
+                }
             }
+            val weatherForecastJob = safeLaunch {
+                try {
+                    getWeatherForecastByCity(city)
+                } catch (e: EmptyFieldException) {
+                    emptyFieldException(e)
+                }
+            }
+            weatherJob.join()
+            weatherForecastJob.join()
+            hideProgress()
         }
+
+    fun getWeatherAndWeatherForecastByCoordinate(coordinates: Coordinates) =
+        viewModelScope.launch() {
+            showProgress()
+            val weatherJob = safeLaunch {
+                getWeatherByCoordinates(coordinates)
+            }
+            val weatherForecastJob = safeLaunch {
+                getWeatherForecastByCoordinates(coordinates)
+            }
+            weatherJob.join()
+            weatherForecastJob.join()
+            hideProgress()
+        }
+
+    private suspend fun getWeatherByCity(city: City) {
+        val response = weatherRepository.getWeatherByCity(city)
+        setState(response)
+        weatherRepository.setCurrentCity(response.cityName)
+    }
+
+    private suspend fun getWeatherForecastByCity(city: City) {
+        val response = weatherRepository.getWeatherForecastByCity(city)
+        _forecastState.value = response
+    }
+
+    private suspend fun getWeatherByCoordinates(coordinates: Coordinates) {
+        val response = weatherRepository.getWeatherByCoordinates(coordinates)
+        setState(response)
+        weatherRepository.setCurrentCity(response.cityName)
+    }
+
+    private suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates) {
+        val response = weatherRepository.getWeatherForecastByCoordinates(coordinates)
+        _forecastState.value = response
+    }
 
     @SuppressLint("SimpleDateFormat")
     private fun dataToString(data: Date): String {

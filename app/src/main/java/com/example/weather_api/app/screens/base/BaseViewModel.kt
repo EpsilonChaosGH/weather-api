@@ -13,6 +13,7 @@ import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.publishEvent
 import com.example.weather_api.app.utils.share
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 open class BaseViewModel(
@@ -34,7 +35,7 @@ open class BaseViewModel(
         _showErrorMessageEvent.publishEvent(message)
     }
 
-    fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) {
+    fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch {
             try {
                 block.invoke(this)
@@ -55,7 +56,7 @@ open class BaseViewModel(
                 _showErrorMessageResEvent.publishEvent(R.string.internal_error)
             }
         }
-    }
+
 
     private fun logError(e: Throwable) {
         logger.error(javaClass.simpleName, e)

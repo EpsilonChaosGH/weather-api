@@ -9,9 +9,6 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -19,10 +16,7 @@ import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weather_api.R
 import com.example.weather_api.app.model.main.entities.City
@@ -31,8 +25,9 @@ import com.example.weather_api.app.screens.base.BaseFragment
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private val requestLocationLauncher = registerForActivityResult(
@@ -64,19 +59,16 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
             false
         })
 
-        addMenu()
+        binding.SearchByCoordinatesImageView.setOnClickListener {
+            getWeatherByCoordinates()
+        }
+
         observeForecastState()
         observeState()
     }
 
-
     private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherByCity(City(city))
-        if (viewModel.state.value?.emptyCityError == true) {
-            showSoftKeyboard(binding.cityEditText)
-        } else {
-            binding.cityTextInput.visibility = View.GONE
-        }
+        viewModel.getWeatherAndWeatherForecastByCity(City(city))
     }
 
     private fun getWeatherByCoordinates() {
@@ -98,7 +90,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                         lat = location.latitude.toString(),
                         lon = location.longitude.toString()
                     )
-                    viewModel.getWeatherByCoordinates(coordinates)
+                    viewModel.getWeatherAndWeatherForecastByCoordinate(coordinates)
                 } else {
                     viewModel.showToast(R.string.gps_not_found)
                 }
@@ -119,6 +111,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 if (it.emptyCityError) getString(R.string.field_is_empty) else null
 
             binding.cityTextInput.isEnabled = it.enableViews
+            binding.SearchByCoordinatesImageView.isEnabled = it.enableViews
 
             binding.cityNameTextView.text = it.cityName
             binding.countryTextView.text = it.country
@@ -141,35 +134,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
             binding.progressBar.visibility = if (it.showProgress) View.VISIBLE else View.INVISIBLE
         }
-    }
-
-    private fun addMenu() {
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.actionSearch -> {
-                        if (binding.cityTextInput.visibility == View.VISIBLE) {
-                            binding.cityTextInput.visibility = View.GONE
-                            hideKeyboardFrom(binding.cityEditText)
-                        } else {
-                            binding.cityTextInput.visibility = View.VISIBLE
-                            showSoftKeyboard(binding.cityEditText)
-                        }
-                        true
-                    }
-                    R.id.actionLocation -> {
-                        getWeatherByCoordinates()
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun onGotLocationPermissionResult(granted: Boolean) {
@@ -205,19 +169,5 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 .create()
                 .show()
         }
-    }
-
-    private fun showSoftKeyboard(view: View) {
-        if (view.requestFocus()) {
-            val imm =
-                requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-        }
-    }
-
-    private fun hideKeyboardFrom(view: View?) {
-        val imm =
-            requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

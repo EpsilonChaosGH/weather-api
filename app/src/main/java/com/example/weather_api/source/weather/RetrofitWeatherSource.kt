@@ -4,13 +4,14 @@ import com.example.weather_api.app.Const
 import com.example.weather_api.app.model.main.WeatherSource
 import com.example.weather_api.app.model.main.entities.City
 import com.example.weather_api.app.model.main.entities.Coordinates
-import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.example.weather_api.source.base.BaseRetrofitSource
 import com.example.weather_api.source.base.RetrofitConfig
-import com.example.weather_api.source.weather.entities.GetWeatherResponseEntity
-import kotlinx.coroutines.delay
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RetrofitWeatherSource(
+
+@Singleton
+class RetrofitWeatherSource @Inject constructor(
     config: RetrofitConfig
 ) : BaseRetrofitSource(config), WeatherSource {
 

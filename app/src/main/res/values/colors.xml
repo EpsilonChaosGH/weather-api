@@ -8,8 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="sky_color">#A4E5FF</color>
-    <color name="weather_text">#100BFF</color>
-    <color name="weather_background">#B24E4E4E</color>
-    <color name="container_background">#40000000</color>
+    <color name="container_background">#40FFFFFF</color>
 </resources>
