@@ -2,7 +2,6 @@ package com.example.weather_api.app.screens.main.weather
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -11,7 +10,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -51,7 +49,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         binding.recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 getWeatherByCity(binding.cityEditText.text.toString())
                 return@OnEditorActionListener true

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/mainWeatherContainer"
+    android:layout_marginBottom="@dimen/medium_space"
+    android:background="@drawable/layout_bg"
+    android:padding="@dimen/low_space"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/countryTextView"
+        style="@style/WeatherDetailsTextView"
+        android:text="@string/country"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/locationCityIconImageView"
+        style="@style/WeatherIconImageView"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_baseline_location_on"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/cityNameTextView"
+        style="@style/TitleTextView"
+        android:layout_marginStart="@dimen/low_space"
+        android:text="@string/current_city"
+        app:layout_constraintBottom_toBottomOf="@id/locationCityIconImageView"
+        app:layout_constraintStart_toEndOf="@id/locationCityIconImageView"
+        app:layout_constraintTop_toTopOf="@+id/locationCityIconImageView" />
+
+    <TextView
+        android:id="@+id/temperatureTextView"
+        style="@style/TitleTextView"
+        android:layout_marginStart="@dimen/low_space"
+        android:text="@string/temperature_test"
+        android:textSize="64sp"
+        app:layout_constraintBottom_toTopOf="@+id/currentDateTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cityNameTextView" />
+
+    <TextView
+        android:id="@+id/temperatureUnitTextView"
+        style="@style/WeatherDetailsTextView"
+        android:text="@string/c"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/temperatureTextView"
+        app:layout_constraintTop_toTopOf="@+id/temperatureTextView" />
+
+    <TextView
+        android:id="@+id/currentDateTextView"
+        style="@style/WeatherDetailsTextView"
+        android:text="@string/tue_8_december_15_00"
+        app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/currentWeatherTextView"
+        style="@style/WeatherDetailsTextView"
+        android:gravity="end"
+        android:text="@string/current_weather"
+        app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/weatherIconImageView"
+        android:layout_width="148dp"
+        android:layout_height="148dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/ic_sun"
+        app:layout_constraintBottom_toTopOf="@+id/currentWeatherTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/temperatureUnitTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

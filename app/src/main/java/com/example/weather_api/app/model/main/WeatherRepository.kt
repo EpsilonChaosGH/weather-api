@@ -6,8 +6,6 @@ import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.example.weather_api.app.model.settings.AppSettings
 import com.example.weather_api.app.model.wrapBackendExceptions
-import com.example.weather_api.source.weather.entities.GetWeatherForecastResponseEntity
-import com.example.weather_api.source.weather.entities.GetWeatherResponseEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 

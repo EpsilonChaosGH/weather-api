@@ -3,7 +3,6 @@ package com.example.weather_api.source.weather.entities
 import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.squareup.moshi.Json
 import java.sql.Date
-import java.util.*
 
 data class GetWeatherResponseEntity(
     val coord: Coord,

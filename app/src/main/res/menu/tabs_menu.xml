@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@id/main_graph"
+        android:title="weather"
+        android:icon="@drawable/ic_cloudy" />
+    <item android:id="@id/weather_details_graph"
+        android:title="details"
+        android:icon="@drawable/ic_sun" />
+    <item android:id="@id/saved_weather_details_graph"
+        android:title="saved details"
+        android:icon="@drawable/ic_launcher_foreground" />
+</menu>
