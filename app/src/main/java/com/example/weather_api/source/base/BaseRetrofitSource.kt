@@ -42,7 +42,7 @@ open class BaseRetrofitSource(
         return try {
             val errorBodyString = e.response()!!.errorBody()!!.string()
             val errorBody: ErrorResponseBody = errorAdapter.fromJson(errorBodyString)!!
-            BackendException(e.code(), errorBody.message)
+            BackendException(e.code(), errorBody.message + "!@!Q")
         } catch (e: Exception) {
             throw ParseBackendResponseException(e)
         }

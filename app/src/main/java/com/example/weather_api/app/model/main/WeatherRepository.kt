@@ -1,6 +1,7 @@
 package com.example.weather_api.app.model.main
 
 import com.example.weather_api.app.model.*
+import com.example.weather_api.app.model.main.entities.AirPollutionEntity
 import com.example.weather_api.app.model.main.entities.City
 import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.model.main.entities.WeatherEntity
@@ -46,5 +47,10 @@ class WeatherRepository @Inject constructor(
     suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates): List<WeatherEntity> =
         wrapBackendExceptions {
             return weatherSource.getWeatherForecastByCoordinates(coordinates)
+        }
+
+    suspend fun getAirPollutionByCoordinate(coordinates: Coordinates): AirPollutionEntity =
+        wrapBackendExceptions {
+            return weatherSource.getAirPollutionByCoordinates(coordinates)
         }
 }

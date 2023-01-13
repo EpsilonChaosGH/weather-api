@@ -1,5 +1,6 @@
 package com.example.weather_api.app.model.main
 
+import com.example.weather_api.app.model.main.entities.AirPollutionEntity
 import com.example.weather_api.app.model.main.entities.City
 import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.model.main.entities.WeatherEntity
@@ -13,5 +14,7 @@ interface WeatherSource {
     suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates): List<WeatherEntity>
 
     suspend fun getWeatherForecastByCity(city: City): List<WeatherEntity>
+
+    suspend fun getAirPollutionByCoordinates(coordinates: Coordinates): AirPollutionEntity
 
 }

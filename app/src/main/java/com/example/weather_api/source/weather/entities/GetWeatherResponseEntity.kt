@@ -1,5 +1,6 @@
 package com.example.weather_api.source.weather.entities
 
+import com.example.weather_api.app.model.main.entities.Coordinates
 import com.example.weather_api.app.model.main.entities.WeatherEntity
 import com.squareup.moshi.Json
 import java.sql.Date
@@ -86,6 +87,7 @@ data class GetWeatherResponseEntity(
         humidity = main.humidity,
         pressure = main.pressure,
         windSpeed = wind.speed,
-        data = Date((dt + timezone) * 1000)
+        data = Date((dt + timezone) * 1000),
+        coordinates = Coordinates( lon = coord.lon.toString(), lat = coord.lat.toString())
     )
 }

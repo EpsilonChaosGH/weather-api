@@ -54,4 +54,13 @@ class RetrofitWeatherSource @Inject constructor(
             cnt = Const.CNT
         ).toWeatherList()
     }
+
+    override suspend fun getAirPollutionByCoordinates(coordinates: Coordinates) =
+        wrapRetrofitExceptions {
+            return@wrapRetrofitExceptions weatherApi.getAirPollutionByCoordinate(
+                lat = coordinates.lat,
+                lon = coordinates.lon,
+                appId = Const.APP_ID
+            ).toAirPollutionEntity()
+        }
 }

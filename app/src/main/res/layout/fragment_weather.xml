@@ -164,7 +164,7 @@
                 app:srcCompat="@drawable/ic_temperature" />
 
             <TextView
-                android:id="@+id/feelsLikeHintTextView1"
+                android:id="@+id/feelsLikeHintTextView"
                 style="@style/WeatherHintTextView"
                 android:text="@string/feels_like"
                 app:layout_constraintBottom_toBottomOf="@+id/temperatureImageView"
@@ -174,9 +174,9 @@
             <TextView
                 android:id="@+id/feelsLikeTextView"
                 style="@style/WeatherValueTextView"
-                app:layout_constraintBottom_toBottomOf="@+id/feelsLikeHintTextView1"
+                app:layout_constraintBottom_toBottomOf="@+id/feelsLikeHintTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/feelsLikeHintTextView1"
+                app:layout_constraintTop_toTopOf="@+id/feelsLikeHintTextView"
                 tools:text="-11.2°" />
 
             <ImageView
@@ -250,6 +250,118 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/airContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:background="@drawable/layout_bg"
+            android:padding="@dimen/medium_space"
+            app:layout_constraintEnd_toEndOf="@id/contentEnd"
+            app:layout_constraintStart_toStartOf="@id/contentStart"
+            app:layout_constraintTop_toBottomOf="@id/weatherContainer">
+
+            <TextView
+                android:id="@+id/NO2TitleTextView"
+                style="@style/WeatherHintTextView"
+                android:text="NO2:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/NO2QualityTextView"
+                style="@style/WeatherHintTextView"
+                android:text="Good"
+                app:layout_constraintBottom_toBottomOf="@+id/NO2TitleTextView"
+                app:layout_constraintStart_toEndOf="@+id/startBarrier"
+                app:layout_constraintTop_toTopOf="@+id/NO2TitleTextView" />
+
+            <TextView
+                android:id="@+id/NO2concentrationTextView"
+                style="@style/WeatherHintTextView"
+                android:text="12.3 μg/m3"
+                app:layout_constraintBottom_toBottomOf="@+id/NO2TitleTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/NO2TitleTextView" />
+
+            <TextView
+                android:id="@+id/PM10TitleTextView"
+                style="@style/WeatherHintTextView"
+                android:text="PM10:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/NO2QualityTextView" />
+
+            <TextView
+                android:id="@+id/PM10QualityTextView"
+                style="@style/WeatherHintTextView"
+                android:text="Good"
+                app:layout_constraintBottom_toBottomOf="@+id/PM10TitleTextView"
+                app:layout_constraintStart_toEndOf="@+id/startBarrier"
+                app:layout_constraintTop_toTopOf="@+id/PM10TitleTextView" />
+
+            <TextView
+                android:id="@+id/PM10concentrationTextView"
+                style="@style/WeatherHintTextView"
+                android:text="12.3 μg/m3"
+                app:layout_constraintBottom_toBottomOf="@+id/PM10TitleTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/PM10TitleTextView" />
+
+            <TextView
+                android:id="@+id/O3TitleTextView"
+                style="@style/WeatherHintTextView"
+                android:text="O3:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/PM10TitleTextView" />
+
+            <TextView
+                android:id="@+id/O3QualityTextView"
+                style="@style/WeatherHintTextView"
+                android:text="Good"
+                app:layout_constraintBottom_toBottomOf="@+id/O3TitleTextView"
+                app:layout_constraintStart_toEndOf="@+id/startBarrier"
+                app:layout_constraintTop_toTopOf="@+id/O3TitleTextView" />
+
+            <TextView
+                android:id="@+id/O3concentrationTextView"
+                style="@style/WeatherHintTextView"
+                android:text="12.3 μg/m3"
+                app:layout_constraintBottom_toBottomOf="@+id/O3TitleTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/O3TitleTextView" />
+
+            <TextView
+                android:id="@+id/PM25TitleTextView"
+                style="@style/WeatherHintTextView"
+                android:text="PM25:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O3TitleTextView" />
+
+            <TextView
+                android:id="@+id/PM25QualityTextView"
+                style="@style/WeatherHintTextView"
+                android:text="Good"
+                app:layout_constraintBottom_toBottomOf="@+id/PM25TitleTextView"
+                app:layout_constraintStart_toEndOf="@+id/startBarrier"
+                app:layout_constraintTop_toTopOf="@+id/PM25TitleTextView" />
+
+            <TextView
+                android:id="@+id/PM25concentrationTextView"
+                style="@style/WeatherHintTextView"
+                android:text="12.3 μg/m3"
+                app:layout_constraintBottom_toBottomOf="@+id/PM25TitleTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/PM25TitleTextView" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/startBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="NO2TitleTextView,PM10TitleTextView,O3TitleTextView,PM25TitleTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
@@ -259,7 +371,7 @@
             app:layout_constraintEnd_toStartOf="@+id/contentEnd"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/contentStart"
-            app:layout_constraintTop_toBottomOf="@+id/weatherContainer"
+            app:layout_constraintTop_toBottomOf="@+id/airContainer"
             tools:itemCount="1"
             tools:listitem="@layout/item_weather_forecast">
 
