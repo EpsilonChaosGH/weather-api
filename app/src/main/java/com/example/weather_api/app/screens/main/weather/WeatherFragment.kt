@@ -290,7 +290,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         }
     }
 
-
     private fun onGotLocationPermissionResult(granted: Boolean) {
         if (granted) {
             viewModel.showToast(R.string.permission_grated)
