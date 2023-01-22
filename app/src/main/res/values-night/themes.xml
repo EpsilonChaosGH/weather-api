@@ -18,7 +18,6 @@
         <item name="android:textViewStyle">@style/GlobalTextViewStyle</item>
     </style>
 
-
     <style name="SplashActivity" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/sky_bg</item>
         <item name="android:windowTranslucentStatus">true</item>

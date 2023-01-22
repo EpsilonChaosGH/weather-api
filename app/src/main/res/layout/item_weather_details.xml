@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainWeatherContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/mainWeatherContainer"
     android:layout_marginBottom="@dimen/medium_space"
     android:background="@drawable/layout_bg"
-    android:padding="@dimen/low_space"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="@dimen/low_space">
 
     <TextView
         android:id="@+id/countryTextView"
