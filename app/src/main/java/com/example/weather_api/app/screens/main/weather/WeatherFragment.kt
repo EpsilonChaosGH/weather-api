@@ -93,7 +93,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                     )
                     viewModel.getWeatherAndWeatherForecastByCoordinate(coordinates)
                 } else {
-                    viewModel.showToast(R.string.gps_not_found)
+                    viewModel.showToast(R.string.error_gps_not_found)
                 }
             }
     }
@@ -109,7 +109,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         viewModel.state.observe(viewLifecycleOwner) {
 
             binding.cityEditText.error =
-                if (it.emptyCityError) getString(R.string.field_is_empty) else null
+                if (it.emptyCityError) getString(R.string.error_field_is_empty) else null
 
             binding.cityTextInput.isEnabled = it.enableViews
             binding.SearchByCoordinatesImageView.isEnabled = it.enableViews
@@ -317,7 +317,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
             AlertDialog.Builder(requireActivity())
                 .setTitle(R.string.permissions_denied)
                 .setMessage(R.string.permissions_denied_forever)
-                .setPositiveButton(R.string.open) { _, _ ->
+                .setPositiveButton(R.string.button_open_settings) { _, _ ->
                     startActivity(appSettingsIntent)
                 }
                 .create()

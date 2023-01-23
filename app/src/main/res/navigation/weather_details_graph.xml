@@ -9,5 +9,10 @@
         android:id="@+id/weatherDetailsFragment"
         android:name="com.example.weather_api.app.screens.main.details.WeatherDetailsFragment"
         android:label="fragment_weather_details"
-        tools:layout="@layout/fragment_weather_details" />
+        tools:layout="@layout/fragment_weather_details" >
+        <action
+            android:id="@+id/action_weatherDetailsFragment_to_main_graph"
+            app:destination="@id/main_graph" />
+    </fragment>
+    <include app:graph="@navigation/weather_graph" />
 </navigation>

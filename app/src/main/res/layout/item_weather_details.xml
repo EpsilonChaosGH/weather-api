@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/countryTextView"
         style="@style/WeatherDetailsTextView"
-        android:text="@string/country"
+        android:text="@string/test_country"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,7 @@
         android:id="@+id/cityNameTextView"
         style="@style/TitleTextView"
         android:layout_marginStart="@dimen/low_space"
-        android:text="@string/current_city"
+        android:text="@string/test_city"
         app:layout_constraintBottom_toBottomOf="@id/locationCityIconImageView"
         app:layout_constraintStart_toEndOf="@id/locationCityIconImageView"
         app:layout_constraintTop_toTopOf="@+id/locationCityIconImageView" />
@@ -36,7 +36,7 @@
         android:id="@+id/temperatureTextView"
         style="@style/TitleTextView"
         android:layout_marginStart="@dimen/low_space"
-        android:text="@string/temperature_test"
+        android:text="@string/test_temperature"
         android:textSize="64sp"
         app:layout_constraintBottom_toTopOf="@+id/currentDateTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
     <TextView
         android:id="@+id/temperatureUnitTextView"
         style="@style/WeatherDetailsTextView"
-        android:text="@string/c"
+        android:text="@string/test_c"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/temperatureTextView"
         app:layout_constraintTop_toTopOf="@+id/temperatureTextView" />
@@ -53,7 +53,7 @@
     <TextView
         android:id="@+id/currentDateTextView"
         style="@style/WeatherDetailsTextView"
-        android:text="@string/tue_8_december_15_00"
+        android:text="@string/test_date"
         app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -61,7 +61,7 @@
         android:id="@+id/currentWeatherTextView"
         style="@style/WeatherDetailsTextView"
         android:gravity="end"
-        android:text="@string/current_weather"
+        android:text="@string/test_weather_description"
         app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
         app:layout_constraintEnd_toEndOf="parent" />
 

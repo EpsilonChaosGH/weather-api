@@ -32,7 +32,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/low_space"
-            android:hint="@string/search_by_city"
+            android:hint="@string/hint_search_by_city"
             app:layout_constraintEnd_toEndOf="@id/contentEnd"
             app:layout_constraintStart_toStartOf="@id/contentStart"
             app:layout_constraintTop_toTopOf="parent"
@@ -77,7 +77,7 @@
             <TextView
                 android:id="@+id/countryTextView"
                 style="@style/WeatherDetailsTextView"
-                android:text="@string/country"
+                android:text="@string/test_country"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,7 +93,7 @@
                 android:id="@+id/cityNameTextView"
                 style="@style/TitleTextView"
                 android:layout_marginStart="@dimen/low_space"
-                android:text="@string/current_city"
+                android:text="@string/test_city"
                 app:layout_constraintBottom_toBottomOf="@id/locationCityIconImageView"
                 app:layout_constraintStart_toEndOf="@id/locationCityIconImageView"
                 app:layout_constraintTop_toTopOf="@+id/locationCityIconImageView" />
@@ -102,7 +102,7 @@
                 android:id="@+id/temperatureTextView"
                 style="@style/TitleTextView"
                 android:layout_marginStart="@dimen/low_space"
-                android:text="@string/temperature_test"
+                android:text="@string/test_temperature"
                 android:textSize="64sp"
                 app:layout_constraintBottom_toTopOf="@+id/currentDateTextView"
                 app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +111,7 @@
             <TextView
                 android:id="@+id/temperatureUnitTextView"
                 style="@style/WeatherDetailsTextView"
-                android:text="@string/c"
+                android:text="@string/test_c"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/temperatureTextView"
                 app:layout_constraintTop_toTopOf="@+id/temperatureTextView" />
@@ -119,7 +119,7 @@
             <TextView
                 android:id="@+id/currentDateTextView"
                 style="@style/WeatherDetailsTextView"
-                android:text="@string/tue_8_december_15_00"
+                android:text="@string/test_date"
                 app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -127,7 +127,7 @@
                 android:id="@+id/currentWeatherTextView"
                 style="@style/WeatherDetailsTextView"
                 android:gravity="end"
-                android:text="@string/current_weather"
+                android:text="@string/test_weather_description"
                 app:layout_constraintBottom_toBottomOf="@id/mainWeatherContainer"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -166,7 +166,7 @@
             <TextView
                 android:id="@+id/feelsLikeHintTextView"
                 style="@style/WeatherHintTextView"
-                android:text="@string/feels_like"
+                android:text="@string/title_feels_like"
                 app:layout_constraintBottom_toBottomOf="@+id/temperatureImageView"
                 app:layout_constraintStart_toEndOf="@+id/temperatureImageView"
                 app:layout_constraintTop_toTopOf="@+id/temperatureImageView" />
@@ -174,10 +174,10 @@
             <TextView
                 android:id="@+id/feelsLikeTextView"
                 style="@style/WeatherValueTextView"
+                android:text="@string/test_temperature"
                 app:layout_constraintBottom_toBottomOf="@+id/feelsLikeHintTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/feelsLikeHintTextView"
-                tools:text="-11.2°" />
+                app:layout_constraintTop_toTopOf="@+id/feelsLikeHintTextView" />
 
             <ImageView
                 android:id="@+id/humidityImageView"
@@ -189,7 +189,7 @@
             <TextView
                 android:id="@+id/humidityHintTextView"
                 style="@style/WeatherHintTextView"
-                android:text="@string/humidity"
+                android:text="@string/title_humidity"
                 app:layout_constraintBottom_toBottomOf="@+id/humidityImageView"
                 app:layout_constraintStart_toEndOf="@+id/humidityImageView"
                 app:layout_constraintTop_toTopOf="@+id/humidityImageView" />
@@ -197,10 +197,10 @@
             <TextView
                 android:id="@+id/humidityTextView"
                 style="@style/WeatherValueTextView"
+                android:text="@string/test_humidity"
                 app:layout_constraintBottom_toBottomOf="@+id/humidityHintTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/humidityHintTextView"
-                tools:text="77%" />
+                app:layout_constraintTop_toTopOf="@+id/humidityHintTextView" />
 
             <ImageView
                 android:id="@+id/pressureImageView"
@@ -212,7 +212,7 @@
             <TextView
                 android:id="@+id/pressureHintTextView"
                 style="@style/WeatherHintTextView"
-                android:text="@string/pressure"
+                android:text="@string/title_pressure"
                 app:layout_constraintBottom_toBottomOf="@+id/pressureImageView"
                 app:layout_constraintStart_toEndOf="@+id/pressureImageView"
                 app:layout_constraintTop_toTopOf="@+id/pressureImageView" />
@@ -220,10 +220,10 @@
             <TextView
                 android:id="@+id/pressureTextView"
                 style="@style/WeatherValueTextView"
+                android:text="@string/test_pressure"
                 app:layout_constraintBottom_toBottomOf="@+id/pressureHintTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/pressureHintTextView"
-                tools:text="1001" />
+                app:layout_constraintTop_toTopOf="@+id/pressureHintTextView" />
 
             <ImageView
                 android:id="@+id/wingSpeedImageView"
@@ -235,7 +235,7 @@
             <TextView
                 android:id="@+id/windSpeedHintTextView"
                 style="@style/WeatherHintTextView"
-                android:text="@string/wind_speed"
+                android:text="@string/title_wind_speed"
                 app:layout_constraintBottom_toBottomOf="@+id/wingSpeedImageView"
                 app:layout_constraintStart_toEndOf="@+id/wingSpeedImageView"
                 app:layout_constraintTop_toTopOf="@+id/wingSpeedImageView" />
@@ -243,10 +243,10 @@
             <TextView
                 android:id="@+id/windSpeedTextView"
                 style="@style/WeatherValueTextView"
+                android:text="@string/test_wind_speed"
                 app:layout_constraintBottom_toBottomOf="@+id/windSpeedHintTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/windSpeedHintTextView"
-                tools:text="2.9" />
+                app:layout_constraintTop_toTopOf="@+id/windSpeedHintTextView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -264,14 +264,14 @@
             <TextView
                 android:id="@+id/NO2TitleTextView"
                 style="@style/WeatherHintTextView"
-                android:text="NO2:"
+                android:text="@string/title_no2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/NO2QualityTextView"
                 style="@style/WeatherHintTextView"
-                android:text="Good"
+                android:text="@string/test_air_quality"
                 app:layout_constraintBottom_toBottomOf="@+id/NO2TitleTextView"
                 app:layout_constraintStart_toEndOf="@+id/startBarrier"
                 app:layout_constraintTop_toTopOf="@+id/NO2TitleTextView" />
@@ -279,7 +279,7 @@
             <TextView
                 android:id="@+id/NO2concentrationTextView"
                 style="@style/WeatherHintTextView"
-                android:text="12.3 μg/m3"
+                android:text="@string/test_air_concentration"
                 app:layout_constraintBottom_toBottomOf="@+id/NO2TitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/NO2TitleTextView" />
@@ -287,14 +287,14 @@
             <TextView
                 android:id="@+id/PM10TitleTextView"
                 style="@style/WeatherHintTextView"
-                android:text="PM10:"
+                android:text="@string/title_pm10"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/NO2QualityTextView" />
 
             <TextView
                 android:id="@+id/PM10QualityTextView"
                 style="@style/WeatherHintTextView"
-                android:text="Good"
+                android:text="@string/test_air_quality"
                 app:layout_constraintBottom_toBottomOf="@+id/PM10TitleTextView"
                 app:layout_constraintStart_toEndOf="@+id/startBarrier"
                 app:layout_constraintTop_toTopOf="@+id/PM10TitleTextView" />
@@ -302,7 +302,7 @@
             <TextView
                 android:id="@+id/PM10concentrationTextView"
                 style="@style/WeatherHintTextView"
-                android:text="12.3 μg/m3"
+                android:text="@string/test_air_concentration"
                 app:layout_constraintBottom_toBottomOf="@+id/PM10TitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/PM10TitleTextView" />
@@ -310,14 +310,14 @@
             <TextView
                 android:id="@+id/O3TitleTextView"
                 style="@style/WeatherHintTextView"
-                android:text="O3:"
+                android:text="@string/title_o3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/PM10TitleTextView" />
 
             <TextView
                 android:id="@+id/O3QualityTextView"
                 style="@style/WeatherHintTextView"
-                android:text="Good"
+                android:text="@string/test_air_quality"
                 app:layout_constraintBottom_toBottomOf="@+id/O3TitleTextView"
                 app:layout_constraintStart_toEndOf="@+id/startBarrier"
                 app:layout_constraintTop_toTopOf="@+id/O3TitleTextView" />
@@ -325,7 +325,7 @@
             <TextView
                 android:id="@+id/O3concentrationTextView"
                 style="@style/WeatherHintTextView"
-                android:text="12.3 μg/m3"
+                android:text="@string/test_air_concentration"
                 app:layout_constraintBottom_toBottomOf="@+id/O3TitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/O3TitleTextView" />
@@ -333,14 +333,14 @@
             <TextView
                 android:id="@+id/PM25TitleTextView"
                 style="@style/WeatherHintTextView"
-                android:text="PM25:"
+                android:text="@string/title_pm25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/O3TitleTextView" />
 
             <TextView
                 android:id="@+id/PM25QualityTextView"
                 style="@style/WeatherHintTextView"
-                android:text="Good"
+                android:text="@string/test_air_quality"
                 app:layout_constraintBottom_toBottomOf="@+id/PM25TitleTextView"
                 app:layout_constraintStart_toEndOf="@+id/startBarrier"
                 app:layout_constraintTop_toTopOf="@+id/PM25TitleTextView" />
@@ -348,7 +348,7 @@
             <TextView
                 android:id="@+id/PM25concentrationTextView"
                 style="@style/WeatherHintTextView"
-                android:text="12.3 μg/m3"
+                android:text="@string/test_air_concentration"
                 app:layout_constraintBottom_toBottomOf="@+id/PM25TitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/PM25TitleTextView" />

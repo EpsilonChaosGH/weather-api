@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/medium_space"
@@ -12,7 +11,7 @@
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/_11_00"
+        android:text="@string/test_time"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -25,9 +24,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/low_space"
-        android:text="@string/temperature_test"
+        android:text="@string/test_temperature"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/timeTextView"
         app:layout_constraintStart_toStartOf="@+id/timeTextView"
         app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
@@ -40,4 +39,5 @@
         app:layout_constraintStart_toStartOf="@+id/temperatureTextView"
         app:layout_constraintTop_toBottomOf="@+id/temperatureTextView"
         app:srcCompat="@drawable/ic_cloud" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

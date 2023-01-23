@@ -6,8 +6,4 @@ interface AppSettings {
 
     fun setCurrentCityName(cityName: String)
 
-    companion object {
-        const val NO_CITY = "Moscow"
-    }
-
 }
