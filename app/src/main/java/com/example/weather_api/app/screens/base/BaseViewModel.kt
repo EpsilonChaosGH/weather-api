@@ -41,19 +41,19 @@ open class BaseViewModel(
                 block.invoke(this)
             } catch (e: ConnectionException) {
                 logError(e)
-                _showErrorMessageResEvent.publishEvent(R.string.connection_error)
+                _showErrorMessageResEvent.publishEvent(R.string.error_connection)
             } catch (e: BackendException) {
                 logError(e)
                 _showErrorMessageEvent.publishEvent(e.message ?: "")
             } catch (e: CityNotFoundException) {
                 logError(e)
-                _showErrorMessageResEvent.publishEvent(R.string.city_not_found_exception)
+                _showErrorMessageResEvent.publishEvent(R.string.error_404_city_not_found)
             } catch (e: InvalidApiKeyException) {
                 logError(e)
-                _showErrorMessageResEvent.publishEvent(R.string.invalid_api_key)
+                _showErrorMessageResEvent.publishEvent(R.string.error_401_invalid_api_key)
             } catch (e: Exception) {
                 logError(e)
-                _showErrorMessageResEvent.publishEvent(R.string.internal_error)
+                _showErrorMessageResEvent.publishEvent(R.string.error_internal)
             }
         }
 

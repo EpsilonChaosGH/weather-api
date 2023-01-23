@@ -1,7 +1,7 @@
 package com.example.weather_api.app.model.settings
 
 import android.content.Context
-import com.example.weather_api.app.model.settings.AppSettings.Companion.NO_CITY
+import com.example.weather_api.app.Const
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,7 +21,7 @@ class SharedPreferencesAppSettings @Inject constructor(
     }
 
     override fun getCurrentCityName(): String =
-        sharedPreferences.getString(PREF_CURRENT_CITY_NAME, NO_CITY) ?: NO_CITY
+        sharedPreferences.getString(PREF_CURRENT_CITY_NAME, Const.NO_CITY) ?: Const.NO_CITY
 
     companion object {
         private const val PREF_CURRENT_CITY_NAME = "currentCity"
