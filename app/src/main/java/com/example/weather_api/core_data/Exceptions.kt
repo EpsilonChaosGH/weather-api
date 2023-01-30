@@ -1,5 +1,6 @@
-package com.example.weather_api.app.model
+package com.example.weather_api.core_data
 
+import com.example.weather_api.app.model.Field
 
 open class AppException : RuntimeException {
     constructor() : super()
@@ -28,19 +29,23 @@ class InvalidApiKeyException(
     cause: Throwable
 ) : AppException(cause = cause)
 
-class ParseBackendResponseException(
+class RequestRateLimitException(
     cause: Throwable
 ) : AppException(cause = cause)
 
+class ParseBackendResponseException(
+    cause: Throwable
+) : AppException(cause = cause)
 
 internal inline fun <T> wrapBackendExceptions(block: () -> T): T {
     try {
         return block.invoke()
     } catch (e: BackendException) {
-        if (e.code == 401) {
-            throw InvalidApiKeyException(e)
-        } else {
-            throw e
+        when (e.code) {
+            401 -> throw InvalidApiKeyException(e)
+            404 -> throw CityNotFoundException(e)
+            429 -> throw RequestRateLimitException(e)
+            else -> throw e
         }
     }
 }

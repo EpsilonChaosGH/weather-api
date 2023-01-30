@@ -1,12 +1,11 @@
 package com.example.weather_api.app.di
 
-import com.example.weather_api.app.model.settings.AppSettings
-import com.example.weather_api.app.model.settings.SharedPreferencesAppSettings
+import com.example.weather_api.core_db.shared_preferebces.AppSettings
+import com.example.weather_api.core_db.shared_preferebces.SharedPreferencesAppSettings
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-
 
 @Module
 @InstallIn(SingletonComponent::class)

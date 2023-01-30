@@ -1,4 +1,4 @@
-package com.example.weather_api.app.model.main.entities
+package com.example.weather_api.core_data.models
 
 import com.example.weather_api.app.model.AirQuality
 
@@ -14,5 +14,6 @@ data class AirPollutionEntity(
     var pm2_5Quality: AirQuality,
     var pm10: Double = 0.0,
     var pm10Quality: AirQuality,
-    var nh3: Double = 0.0
+    var nh3: Double = 0.0,
+    var coordinates: Coordinates
 )

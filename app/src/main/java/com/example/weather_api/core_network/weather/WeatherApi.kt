@@ -1,8 +1,8 @@
-package com.example.weather_api.source.weather
+package com.example.weather_api.core_network.weather
 
-import com.example.weather_api.source.weather.entities.GetAirPollutionRepositoryEntity
-import com.example.weather_api.source.weather.entities.GetWeatherForecastResponseEntity
-import com.example.weather_api.source.weather.entities.GetWeatherResponseEntity
+import com.example.weather_api.core_network.weather.entities.GetAirPollutionRepositoryEntity
+import com.example.weather_api.core_network.weather.entities.GetWeatherForecastResponseEntity
+import com.example.weather_api.core_network.weather.entities.GetWeatherResponseEntity
 import retrofit2.http.GET
 import retrofit2.http.Query
 

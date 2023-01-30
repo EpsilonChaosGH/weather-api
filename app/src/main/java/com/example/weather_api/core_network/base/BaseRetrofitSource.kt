@@ -1,9 +1,9 @@
-package com.example.weather_api.source.base
+package com.example.weather_api.core_network.base
 
-import com.example.weather_api.app.model.AppException
-import com.example.weather_api.app.model.BackendException
-import com.example.weather_api.app.model.ConnectionException
-import com.example.weather_api.app.model.ParseBackendResponseException
+import com.example.weather_api.core_data.AppException
+import com.example.weather_api.core_data.BackendException
+import com.example.weather_api.core_data.ConnectionException
+import com.example.weather_api.core_data.ParseBackendResponseException
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
@@ -42,7 +42,7 @@ open class BaseRetrofitSource(
         return try {
             val errorBodyString = e.response()!!.errorBody()!!.string()
             val errorBody: ErrorResponseBody = errorAdapter.fromJson(errorBodyString)!!
-            BackendException(e.code(), errorBody.message + "!@!Q")
+            BackendException(e.code(), errorBody.message)
         } catch (e: Exception) {
             throw ParseBackendResponseException(e)
         }

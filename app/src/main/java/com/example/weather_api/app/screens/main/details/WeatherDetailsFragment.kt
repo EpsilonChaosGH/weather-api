@@ -7,13 +7,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.weather_api.R
 import com.example.weather_api.databinding.FragmentWeatherDetailsBinding
 
-class WeatherDetailsFragment: Fragment(R.layout.fragment_weather_details) {
+class WeatherDetailsFragment : Fragment(R.layout.fragment_weather_details) {
 
     private lateinit var binding: FragmentWeatherDetailsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding  = FragmentWeatherDetailsBinding.bind(view)
+        binding = FragmentWeatherDetailsBinding.bind(view)
 
         binding.button.setOnClickListener {
             findNavController().navigate(R.id.action_weatherDetailsFragment_to_main_graph)

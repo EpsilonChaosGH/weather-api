@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
 import com.example.weather_api.app.model.AirQuality
-import com.example.weather_api.app.model.main.entities.City
-import com.example.weather_api.app.model.main.entities.Coordinates
+import com.example.weather_api.app.model.Field
+import com.example.weather_api.core_data.models.City
+import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
+import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,23 +59,26 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
             cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    getWeatherByCity(cityEditText.text.toString())
-                    return@OnEditorActionListener true
+                    try {
+                        if (cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.City)
+                        getWeatherByCity(cityEditText.text.toString())
+                        return@OnEditorActionListener true
+                    } catch (e: EmptyFieldException) {
+                        viewModel.emptyFieldException(e)
+                    }
                 }
                 false
             })
-
-            SearchByCoordinatesImageView.setOnClickListener {
-                getWeatherByCoordinates()
-            }
+            SearchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
+
         observeForecastState()
         observeWeatherState()
         observeAirState()
     }
 
     private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherAndWeatherForecastByCity(City(city))
+        viewModel.getWeatherAndForecastAndAirByCity(City(city))
     }
 
     private fun getWeatherByCoordinates() {
@@ -95,7 +100,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                         lat = location.latitude.toString(),
                         lon = location.longitude.toString()
                     )
-                    viewModel.getWeatherAndWeatherForecastByCoordinate(coordinates)
+                    viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates)
                 } else {
                     viewModel.showToast(R.string.error_gps_not_found)
                 }

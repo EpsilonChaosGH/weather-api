@@ -1,11 +1,10 @@
-package com.example.weather_api.source.weather
+package com.example.weather_api.core_network.weather
 
-import com.example.weather_api.app.Const
-import com.example.weather_api.app.model.main.WeatherSource
-import com.example.weather_api.app.model.main.entities.City
-import com.example.weather_api.app.model.main.entities.Coordinates
-import com.example.weather_api.source.base.BaseRetrofitSource
-import com.example.weather_api.source.base.RetrofitConfig
+import com.example.weather_api.app.model.Const
+import com.example.weather_api.core_data.models.City
+import com.example.weather_api.core_data.models.Coordinates
+import com.example.weather_api.core_network.base.BaseRetrofitSource
+import com.example.weather_api.core_network.base.RetrofitConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 

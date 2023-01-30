@@ -1,7 +1,8 @@
-package com.example.weather_api.source.weather.entities
+package com.example.weather_api.core_network.weather.entities
 
 import com.example.weather_api.app.model.AirQuality
-import com.example.weather_api.app.model.main.entities.AirPollutionEntity
+import com.example.weather_api.core_data.models.AirPollutionEntity
+import com.example.weather_api.core_data.models.Coordinates
 
 data class GetAirPollutionRepositoryEntity(
     val coord: Coord,
@@ -24,6 +25,7 @@ data class GetAirPollutionRepositoryEntity(
     )
 
     fun toAirPollutionEntity() = AirPollutionEntity(
+
         co = list[0].components["co"] ?: -1.0,
         no = list[0].components["no"] ?: -1.0,
         no2 = list[0].components["no2"] ?: -1.0,
@@ -36,8 +38,8 @@ data class GetAirPollutionRepositoryEntity(
         pm10 = list[0].components["pm10"] ?: -1.0,
         pm10Quality = checkPm10(list[0].components["pm10"] ?: -1.0),
         nh3 = list[0].components["nh3"] ?: -1.0,
-
-        )
+        coordinates = Coordinates(lon = coord.lon.toString(), lat = coord.lat.toString()),
+    )
 
     private fun checkNo2(no2: Double): AirQuality {
         return when (no2) {

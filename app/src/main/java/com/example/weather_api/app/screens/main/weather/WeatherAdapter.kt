@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.R
-import com.example.weather_api.app.model.main.entities.WeatherEntity
+import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.databinding.ItemWeatherForecastBinding
 import java.text.SimpleDateFormat
 import java.util.*

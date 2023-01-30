@@ -1,4 +1,4 @@
-package com.example.weather_api.source.base
+package com.example.weather_api.core_network.base
 
 import com.squareup.moshi.Moshi
 import retrofit2.Retrofit

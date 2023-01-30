@@ -9,7 +9,7 @@
     <string name="error_401_invalid_api_key">Invalid API key</string>
     <string name="error_404_city_not_found">City not found</string>
     <string name="error_429_request_rate_limit_surpassing">Api request rate limit surpassing for application</string>
-    <string name="error_connection">Can\'t connect to the server</string>
+    <string name="error_connection">Mobile network not available</string>
     <string name="error_gps_not_found">GPS not found</string>
     <string name="error_internal">Internal error! Please try again later.</string>
     <string name="error_field_is_empty">Field is empty</string>

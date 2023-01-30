@@ -1,7 +1,7 @@
 package com.example.weather_api.app.di
 
-import com.example.weather_api.app.model.main.WeatherSource
-import com.example.weather_api.source.weather.RetrofitWeatherSource
+import com.example.weather_api.core_network.weather.WeatherSource
+import com.example.weather_api.core_network.weather.RetrofitWeatherSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
