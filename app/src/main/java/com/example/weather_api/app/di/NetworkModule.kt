@@ -1,6 +1,6 @@
 package com.example.weather_api.app.di
 
-import com.example.weather_api.app.Const
+import com.example.weather_api.app.model.Const
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides

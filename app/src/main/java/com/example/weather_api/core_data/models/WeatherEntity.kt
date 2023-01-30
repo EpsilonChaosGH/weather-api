@@ -1,4 +1,4 @@
-package com.example.weather_api.app.model.main.entities
+package com.example.weather_api.core_data.models
 
 import java.sql.Date
 

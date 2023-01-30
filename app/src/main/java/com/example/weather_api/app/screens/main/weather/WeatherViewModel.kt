@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.AirQuality
-import com.example.weather_api.app.model.EmptyFieldException
 import com.example.weather_api.app.model.Field
-import com.example.weather_api.app.model.main.WeatherRepository
-import com.example.weather_api.app.model.main.entities.AirPollutionEntity
-import com.example.weather_api.app.model.main.entities.City
-import com.example.weather_api.app.model.main.entities.Coordinates
-import com.example.weather_api.app.model.main.entities.WeatherEntity
+import com.example.weather_api.core_data.models.AirPollutionEntity
+import com.example.weather_api.core_data.models.City
+import com.example.weather_api.core_data.models.Coordinates
+import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.app.screens.base.BaseViewModel
 import com.example.weather_api.app.utils.*
 import com.example.weather_api.app.utils.logger.Logger
+import com.example.weather_api.core_data.EmptyFieldException
+import com.example.weather_api.core_data.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.sql.Date
@@ -37,75 +37,68 @@ class WeatherViewModel @Inject constructor(
     val forecastState = _forecastState.share()
 
     init {
-        getWeatherAndWeatherForecastByCity(City(weatherRepository.getCurrentCity()))
+        listenCurrentState()
     }
 
-    fun getWeatherAndWeatherForecastByCity(city: City) =
+    private fun listenCurrentState() {
+        viewModelScope.launch {
+            weatherRepository.listenCurrentWeatherState().collect { weather ->
+                setState(weather)
+            }
+        }
+        viewModelScope.launch {
+            weatherRepository.listenCurrentForecastState().collect { forecast ->
+                _forecastState.value = forecast
+            }
+        }
+        viewModelScope.launch {
+            weatherRepository.listenCurrentAirPollutionState().collect { airPollution ->
+                setAirState(airPollution)
+            }
+        }
+    }
+
+    fun getWeatherAndForecastAndAirByCity(city: City) {
         viewModelScope.launch {
             showProgress()
             val weatherJob = safeLaunch {
-                try {
-                    getWeatherByCity(city)
-                } catch (e: EmptyFieldException) {
-                    emptyFieldException(e)
-                }
+                weatherRepository.getWeatherByCity(city)
             }
-            val weatherForecastJob = safeLaunch {
-                try {
-                    getWeatherForecastByCity(city)
-                } catch (e: EmptyFieldException) {
-                    emptyFieldException(e)
-                }
+            val forecastJob = safeLaunch {
+                weatherRepository.getForecastByCity(city)
+            }
+            val airJob = safeLaunch {
+                weatherRepository.getAirPollutionByCity(city)
             }
             weatherJob.join()
-            weatherForecastJob.join()
+            forecastJob.join()
+            airJob.join()
             hideProgress()
         }
+    }
 
-    fun getWeatherAndWeatherForecastByCoordinate(coordinates: Coordinates) =
+    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) =
         viewModelScope.launch {
             showProgress()
-            val airJob = safeLaunch {
-                getAirPollutionByCoordinate(coordinates)
-            }
             val weatherJob = safeLaunch {
-                getWeatherByCoordinates(coordinates)
+                weatherRepository.getWeatherByCoordinates(coordinates)
             }
-            val weatherForecastJob = safeLaunch {
-                getWeatherForecastByCoordinates(coordinates)
+            val forecastJob = safeLaunch {
+                weatherRepository.getForecastByCoordinates(coordinates)
+            }
+            val airJob = safeLaunch {
+                weatherRepository.getAirPollutionByCoordinate(coordinates)
             }
             airJob.join()
             weatherJob.join()
-            weatherForecastJob.join()
+            forecastJob.join()
             hideProgress()
         }
 
-    private suspend fun getWeatherByCity(city: City) {
-        val response = weatherRepository.getWeatherByCity(city)
-        setState(response)
-        weatherRepository.setCurrentCity(response.cityName)
-    }
-
-    private suspend fun getWeatherForecastByCity(city: City) {
-        val response = weatherRepository.getWeatherForecastByCity(city)
-        _forecastState.value = response
-        getAirPollutionByCoordinate(response[0].coordinates)
-    }
-
-    private suspend fun getWeatherByCoordinates(coordinates: Coordinates) {
-        val response = weatherRepository.getWeatherByCoordinates(coordinates)
-        setState(response)
-        weatherRepository.setCurrentCity(response.cityName)
-    }
-
-    private suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates) {
-        val response = weatherRepository.getWeatherForecastByCoordinates(coordinates)
-        _forecastState.value = response
-    }
-
-    private suspend fun getAirPollutionByCoordinate(coordinates: Coordinates) {
-        val response = weatherRepository.getAirPollutionByCoordinate(coordinates)
-        setAirState(response)
+    fun emptyFieldException(e: EmptyFieldException) {
+        _state.value = _state.requireValue().copy(
+            emptyCityError = e.field == Field.City
+        )
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -117,12 +110,6 @@ class WeatherViewModel @Inject constructor(
         } catch (e: Exception) {
             e.toString()
         }
-    }
-
-    private fun emptyFieldException(e: EmptyFieldException) {
-        _state.value = _state.requireValue().copy(
-            emptyCityError = e.field == Field.City
-        )
     }
 
     private fun setState(weather: WeatherEntity) {
@@ -140,7 +127,7 @@ class WeatherViewModel @Inject constructor(
         )
     }
 
-    private fun setAirState(airPollutionEntity: AirPollutionEntity){
+    private fun setAirState(airPollutionEntity: AirPollutionEntity) {
         _airState.value = _airState.requireValue().copy(
             no2 = airPollutionEntity.no2.toString(),
             no2Quality = airPollutionEntity.no2Quality,

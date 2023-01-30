@@ -3,17 +3,12 @@ package com.example.weather_api.app.screens.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.R
-import com.example.weather_api.app.model.BackendException
-import com.example.weather_api.app.model.CityNotFoundException
-import com.example.weather_api.app.model.ConnectionException
-import com.example.weather_api.app.model.InvalidApiKeyException
-import com.example.weather_api.app.model.main.WeatherRepository
 import com.example.weather_api.app.utils.MutableLiveEvent
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.publishEvent
 import com.example.weather_api.app.utils.share
+import com.example.weather_api.core_data.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 open class BaseViewModel(
@@ -51,12 +46,14 @@ open class BaseViewModel(
             } catch (e: InvalidApiKeyException) {
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_401_invalid_api_key)
-            } catch (e: Exception) {
+            } catch (e: RequestRateLimitException) {
+                logError(e)
+                _showErrorMessageResEvent.publishEvent(R.string.error_429_request_rate_limit_surpassing)
+            }  catch (e: Exception) {
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_internal)
             }
         }
-
 
     private fun logError(e: Throwable) {
         logger.error(javaClass.simpleName, e)
