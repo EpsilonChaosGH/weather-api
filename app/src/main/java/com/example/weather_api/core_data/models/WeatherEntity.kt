@@ -13,5 +13,5 @@ data class WeatherEntity(
     val pressure: Long,
     val windSpeed: Double,
     val data: Date,
-    val coordinates: Coordinates
+    val location: Location
 )

@@ -4,13 +4,9 @@
     <item
         android:id="@id/main_graph"
         android:icon="@drawable/ic_cloudy"
-        android:title="weather" />
+        android:title="Weather" />
     <item
-        android:id="@id/weather_details_graph"
-        android:icon="@drawable/ic_sun"
-        android:title="details" />
-    <item
-        android:id="@id/saved_weather_details_graph"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="saved details" />
+        android:id="@id/favorites_graph"
+        android:icon="@drawable/ic_baseline_favorite_border_24"
+        android:title="Favorites" />
 </menu>

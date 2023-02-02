@@ -5,7 +5,6 @@
     app:startDestination="@id/main_graph">
 
     <include app:graph="@navigation/weather_graph" />
-    <include app:graph="@navigation/weather_details_graph" />
-    <include app:graph="@navigation/saved_weather_details_graph" />
+    <include app:graph="@navigation/favorites_graph" />
 
 </navigation>

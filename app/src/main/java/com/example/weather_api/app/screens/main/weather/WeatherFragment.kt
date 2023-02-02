@@ -69,7 +69,8 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 }
                 false
             })
-            SearchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
+            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
+            searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
 
         observeForecastState()
@@ -79,6 +80,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private fun getWeatherByCity(city: String) {
         viewModel.getWeatherAndForecastAndAirByCity(City(city))
+    }
+
+    private fun addOrRemoveToFavorite(){
+        viewModel.addOrRemoveToFavorite()
     }
 
     private fun getWeatherByCoordinates() {
@@ -121,7 +126,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                     if (it.emptyCityError) getString(R.string.error_field_is_empty) else null
 
                 cityTextInput.isEnabled = it.enableViews
-                SearchByCoordinatesImageView.isEnabled = it.enableViews
+                searchByCoordinatesImageView.isEnabled = it.enableViews
 
                 cityNameTextView.text = it.cityName
                 countryTextView.text = it.country
@@ -141,6 +146,9 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                     "Mist" -> weatherIconImageView.setImageResource(R.drawable.ic_fog)
                     else -> weatherIconImageView.setImageResource(R.drawable.ic_cloudy)
                 }
+
+                if (it.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+                else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
                 progressBar.visibility =
                     if (it.showProgress) View.VISIBLE else View.INVISIBLE

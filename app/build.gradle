@@ -16,6 +16,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -48,19 +54,28 @@ dependencies {
 
     implementation "com.google.android.gms:play-services-location:$playservices_version"
 
+    //Navigation components
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    //Retrofit
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
 
-    api 'com.github.kirich1409:viewbindingpropertydelegate:1.4.4'
-    api 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6'
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
+    //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    //ViewBindDelegate
+    api 'com.github.kirich1409:viewbindingpropertydelegate:1.4.4'
+    api 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6'
 }
 
 kapt {
