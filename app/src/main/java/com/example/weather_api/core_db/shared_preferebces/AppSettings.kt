@@ -1,11 +1,11 @@
 package com.example.weather_api.core_db.shared_preferebces
 
-import com.example.weather_api.core_data.models.Coordinates
+import com.example.weather_api.core_data.models.Location
 
 interface AppSettings {
 
-    fun getCurrentCoordinates(): Coordinates
+    fun getCurrentLocation(): Location
 
-    fun setCurrentCoordinates(coordinates: Coordinates)
+    fun setCurrentLocation(location: Location)
 
 }

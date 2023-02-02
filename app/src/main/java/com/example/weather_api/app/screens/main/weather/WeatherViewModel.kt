@@ -95,6 +95,16 @@ class WeatherViewModel @Inject constructor(
             hideProgress()
         }
 
+    fun addOrRemoveToFavorite(){
+        viewModelScope.launch {
+            if (state.value!!.isFavorite) {
+                weatherRepository.removeFromFavorites()
+            } else{
+                weatherRepository.addToFavorites()
+            }
+        }
+    }
+
     fun emptyFieldException(e: EmptyFieldException) {
         _state.value = _state.requireValue().copy(
             emptyCityError = e.field == Field.City
@@ -123,7 +133,8 @@ class WeatherViewModel @Inject constructor(
             humidity = weather.humidity.toString(),
             pressure = weather.pressure.toString(),
             windSpeed = weather.windSpeed.toString(),
-            date = dataToString(weather.data)
+            date = dataToString(weather.data),
+            isFavorite = weather.location.isFavorite
         )
     }
 
@@ -170,6 +181,7 @@ class WeatherViewModel @Inject constructor(
         val pressure: String = "0.0",
         val windSpeed: String = "0.0",
         val date: String = "...",
+        val isFavorite: Boolean = false,
         val emptyCityError: Boolean = false,
         val weatherInProgress: Boolean = false
     ) {
