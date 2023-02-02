@@ -12,8 +12,8 @@ Weather-api is a simple weather forecast app, which uses some APIs to fetch 3 da
 
 ### Preview
 <p align="center">
-<img src="Screenshot_weather.png" width="50%"/>
-<img src="Screenshot_favorites.png" width="50%"/>/>
+<img src="Screenshot_weather.png" width="49%"/>
+<img src="Screenshot_favorites.png" width="49%"/>/>
 </p>
 
 ### Libraries and tools 🛠
