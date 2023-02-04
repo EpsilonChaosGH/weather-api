@@ -26,5 +26,5 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideLocationDao(db: AppDatabase): LocationDao = db.locationDao ()
+    fun provideLocationDao(db: AppDatabase): LocationDao = db.locationDao()
 }

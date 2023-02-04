@@ -4,8 +4,8 @@
     android:id="@+id/mainWeatherContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/medium_space"
     android:layout_marginStart="@dimen/medium_space"
+    android:layout_marginTop="@dimen/medium_space"
     android:layout_marginEnd="@dimen/medium_space"
     android:background="@drawable/layout_bg"
     android:padding="@dimen/low_space">
@@ -13,8 +13,8 @@
     <TextView
         android:id="@+id/countryTextView"
         style="@style/WeatherDetailsTextView"
-        android:text="@string/test_country"
         android:layout_marginEnd="@dimen/low_space"
+        android:text="@string/test_country"
         app:layout_constraintEnd_toStartOf="@+id/favoriteImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,8 +72,8 @@
         android:id="@+id/weatherIconImageView"
         android:layout_width="108dp"
         android:layout_height="108dp"
-        android:src="@drawable/ic_sun"
         android:layout_marginEnd="@dimen/medium_space"
+        android:src="@drawable/ic_sun"
         app:layout_constraintBottom_toTopOf="@+id/currentWeatherTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/temperatureUnitTextView"
@@ -86,6 +86,6 @@
         android:layout_height="44dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_baseline_favorite_border_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

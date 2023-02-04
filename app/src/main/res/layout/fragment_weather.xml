@@ -77,8 +77,8 @@
             <TextView
                 android:id="@+id/countryTextView"
                 style="@style/WeatherDetailsTextView"
-                android:text="@string/test_country"
                 android:layout_marginEnd="@dimen/low_space"
+                android:text="@string/test_country"
                 app:layout_constraintEnd_toStartOf="@+id/favoriteImageView"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -149,8 +149,8 @@
                 android:layout_height="44dp"
                 android:layout_marginTop="0dp"
                 android:src="@drawable/ic_baseline_favorite_border_24"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
