@@ -8,7 +8,7 @@ interface WeatherRepository {
     suspend fun listenCurrentWeatherState(): Flow<WeatherEntity>
     suspend fun listenCurrentForecastState(): Flow<List<WeatherEntity>>
     suspend fun listenCurrentAirPollutionState(): Flow<AirPollutionEntity>
-    suspend fun listenCurrentFavoritesLocations(): Flow<List<WeatherEntity>>
+    suspend fun listenCurrentFavoritesLocations(): Flow<List<Location>>
 
     suspend fun getWeatherByCity(city: City)
     suspend fun getForecastByCity(city: City)
@@ -20,5 +20,6 @@ interface WeatherRepository {
 
     suspend fun addToFavorites()
     suspend fun removeFromFavorites()
+    suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity
 
 }

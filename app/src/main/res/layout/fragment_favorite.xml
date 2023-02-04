@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sky_bg"
-    tools:listitem="@layout/item_favorite"
-    tools:context=".app.screens.main.favorites.FavoritesFragment">
+    tools:context=".app.screens.main.favorites.FavoritesFragment"
+    tools:listitem="@layout/item_favorite">
 
 </androidx.recyclerview.widget.RecyclerView>

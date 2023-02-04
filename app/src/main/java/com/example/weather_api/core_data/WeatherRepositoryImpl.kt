@@ -6,12 +6,9 @@ import com.example.weather_api.core_db.shared_preferebces.AppSettings
 import com.example.weather_api.core_data.models.*
 import com.example.weather_api.core_db.room.AppDatabase
 import com.example.weather_api.core_network.weather.WeatherSource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +22,6 @@ class WeatherRepositoryImpl @Inject constructor(
     private val currentWeatherState = MutableSharedFlow<WeatherEntity>(1)
     private val currentForecastState = MutableSharedFlow<List<WeatherEntity>>(1)
     private val currentAirPollutionState = MutableSharedFlow<AirPollutionEntity>(1)
-    private val currentFavoritesLocations = MutableSharedFlow<List<WeatherEntity>>(1)
 
     private fun getCurrentLocation(): Location = appSettings.getCurrentLocation()
 
@@ -48,20 +44,17 @@ class WeatherRepositoryImpl @Inject constructor(
         return currentAirPollutionState
     }
 
-    override suspend fun listenCurrentFavoritesLocations(): Flow<List<WeatherEntity>> {
-        loadFavoritesLocations()
-        return currentFavoritesLocations
+    override suspend fun listenCurrentFavoritesLocations(): Flow<List<Location>> {
+        return appDatabase.locationDao().getAllLocationsFlow().map { list ->
+            list.map {
+                it?.toLocation() ?: throw EmptyFavoritesException()
+            }
+        }
     }
 
     override suspend fun getWeatherByCity(city: City) = wrapBackendExceptions {
         delay(1000)
-        val response = weatherSource.getWeatherByCity(city)
-        appDatabase.locationDao().getAll().map { locationDB -> locationDB.toLocation() }
-            .forEach { location ->
-                if (location.city == response.cityName) {
-                    response.location.isFavorite = true
-                }
-            }
+        val response = checkForFavorites(weatherSource.getWeatherByCity(city))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
     }
@@ -77,13 +70,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun getWeatherByCoordinates(coordinates: Coordinates) = wrapBackendExceptions {
         delay(1000)
-        val response = weatherSource.getWeatherByCoordinates(coordinates)
-        appDatabase.locationDao().getAll().map { locationDB -> locationDB.toLocation() }
-            .forEach { location ->
-                if (location.city == response.cityName) {
-                    response.location.isFavorite = true
-                }
-            }
+        val response = checkForFavorites(weatherSource.getWeatherByCoordinates(coordinates))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
     }
@@ -98,36 +85,33 @@ class WeatherRepositoryImpl @Inject constructor(
             currentAirPollutionState.emit(weatherSource.getAirPollutionByCoordinates(coordinates))
         }
 
-    override suspend fun addToFavorites() {
+    override suspend fun addToFavorites() = wrapSQLiteException(Dispatchers.IO) {
         val state = currentWeatherState.replayCache[0]
         state.location.isFavorite = true
         currentWeatherState.emit(state)
-        appDatabase.locationDao().insertAll(state.location.toDB())
-        loadFavoritesLocations()
+        appDatabase.locationDao().insertLocation(state.location.toDB())
     }
 
-    override suspend fun removeFromFavorites() {
+    override suspend fun removeFromFavorites() = wrapSQLiteException(Dispatchers.IO) {
         val state = currentWeatherState.replayCache[0]
         state.location.isFavorite = false
         currentWeatherState.emit(state)
-        appDatabase.locationDao().delete(state.cityName)
-        loadFavoritesLocations()
-
+        appDatabase.locationDao().deleteLocation(state.location.city)
     }
 
-    private suspend fun loadFavoritesLocations() {
-        val favoritesLocationList = mutableListOf<WeatherEntity>()
-        appDatabase.locationDao().getAll().map { locationDB ->
-            coroutineScope {
-                async {
-                    wrapBackendExceptions {
-                        val response =
-                            weatherSource.getWeatherByCoordinates(locationDB.toLocation().coordinates)
-                        favoritesLocationList.add(response)
-                    }
-                    currentFavoritesLocations.emit(favoritesLocationList)
+    override suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
+        wrapBackendExceptions {
+            return weatherSource.getWeatherByCoordinates(coordinates)
+        }
+
+    private suspend fun checkForFavorites(response: WeatherEntity): WeatherEntity =
+        wrapSQLiteException(Dispatchers.IO) {
+            appDatabase.locationDao().getAllLocations().forEach { locationDb ->
+                if (locationDb?.city == response.cityName) {
+                    response.location.isFavorite = true
                 }
             }
+            return@wrapSQLiteException response
         }
-    }
+
 }

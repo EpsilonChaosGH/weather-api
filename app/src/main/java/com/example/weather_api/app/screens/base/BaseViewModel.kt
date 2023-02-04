@@ -49,9 +49,12 @@ open class BaseViewModel(
             } catch (e: RequestRateLimitException) {
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_429_request_rate_limit_surpassing)
-            }  catch (e: Exception) {
+            } catch (e: Exception) {
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_internal)
+            } catch (e: StorageException) {
+                logError(e)
+                showToastString("empty favorites")
             }
         }
 

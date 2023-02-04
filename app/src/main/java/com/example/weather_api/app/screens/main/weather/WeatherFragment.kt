@@ -82,7 +82,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         viewModel.getWeatherAndForecastAndAirByCity(City(city))
     }
 
-    private fun addOrRemoveToFavorite(){
+    private fun addOrRemoveToFavorite() {
         viewModel.addOrRemoveToFavorite()
     }
 

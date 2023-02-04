@@ -1,6 +1,10 @@
 package com.example.weather_api.core_data
 
+import android.database.sqlite.SQLiteException
 import com.example.weather_api.app.model.Field
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withContext
 
 open class AppException : RuntimeException {
     constructor() : super()
@@ -10,6 +14,9 @@ open class AppException : RuntimeException {
 
 class EmptyFieldException(
     val field: Field
+) : AppException()
+
+class EmptyFavoritesException(
 ) : AppException()
 
 class ConnectionException(
@@ -37,6 +44,8 @@ class ParseBackendResponseException(
     cause: Throwable
 ) : AppException(cause = cause)
 
+class StorageException : AppException()
+
 internal inline fun <T> wrapBackendExceptions(block: () -> T): T {
     try {
         return block.invoke()
@@ -47,5 +56,15 @@ internal inline fun <T> wrapBackendExceptions(block: () -> T): T {
             429 -> throw RequestRateLimitException(e)
             else -> throw e
         }
+    }
+}
+
+suspend fun <T> wrapSQLiteException(dispatcher: CoroutineDispatcher, block: suspend CoroutineScope.() -> T): T {
+    try {
+        return withContext(dispatcher, block)
+    } catch (e: SQLiteException) {
+        val appException = StorageException()
+        appException.initCause(e)
+        throw appException
     }
 }
