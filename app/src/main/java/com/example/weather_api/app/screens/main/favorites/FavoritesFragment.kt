@@ -1,7 +1,6 @@
 package com.example.weather_api.app.screens.main.favorites
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,8 +33,6 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
 
     private fun observeFavoriteState() {
         viewModel.favoritesState.observe(viewLifecycleOwner) {
-            Log.e("aaa","obser")
-            Log.e("aaa",it.size.toString())
             adapter.favoritesList = it
         }
     }

@@ -77,7 +77,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) =
+    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) {
         viewModelScope.launch {
             showProgress()
             val weatherJob = safeLaunch {
@@ -94,6 +94,7 @@ class WeatherViewModel @Inject constructor(
             forecastJob.join()
             hideProgress()
         }
+    }
 
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
@@ -126,7 +127,7 @@ class WeatherViewModel @Inject constructor(
         _state.value = _state.requireValue().copy(
             cityName = weather.cityName,
             country = weather.country,
-            temperature = weather.temperature.toString(),
+            temperature = weather.temperature.toInt().toString(),
             mainWeather = weather.mainWeather,
             description = weather.description,
             feelsLike = weather.feelsLike.toString(),

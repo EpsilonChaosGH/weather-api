@@ -47,7 +47,7 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
         val weather = weatherList[position]
 
         holder.binding.timeTextView.text = dataToTime(weather.data)
-        holder.binding.temperatureTextView.text = "${weather.temperature}°"
+        holder.binding.temperatureTextView.text = "${weather.temperature.toInt()}°"
         when (weather.mainWeather) {
             "Clear" -> holder.binding.imageView.setImageResource(R.drawable.ic_sun)
             "Clouds" -> holder.binding.imageView.setImageResource(R.drawable.ic_cloud)
