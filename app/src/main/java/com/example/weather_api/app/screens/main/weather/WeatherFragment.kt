@@ -70,6 +70,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 false
             })
             favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
+
             searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
 
@@ -130,7 +131,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
                 cityNameTextView.text = it.cityName
                 countryTextView.text = it.country
-                temperatureTextView.text = it.temperature
+                temperatureTextView.text = "${it.temperature}°C"
                 currentWeatherTextView.text = it.description
                 currentDateTextView.text = it.date
                 feelsLikeTextView.text = "${it.feelsLike}°"

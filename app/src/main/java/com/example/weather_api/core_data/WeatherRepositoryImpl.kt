@@ -1,8 +1,9 @@
 package com.example.weather_api.core_data
 
-import com.example.weather_api.core_data.mappers.toDB
+import com.example.weather_api.app.model.Const
+import com.example.weather_api.core_data.mappers.toLastDB
+import com.example.weather_api.core_data.mappers.toLocationDB
 import com.example.weather_api.core_data.mappers.toLocation
-import com.example.weather_api.core_db.shared_preferebces.AppSettings
 import com.example.weather_api.core_data.models.*
 import com.example.weather_api.core_db.room.AppDatabase
 import com.example.weather_api.core_network.weather.WeatherSource
@@ -15,19 +16,12 @@ import javax.inject.Singleton
 @Singleton
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherSource: WeatherSource,
-    private val appDatabase: AppDatabase,
-    private val appSettings: AppSettings
+    private val appDatabase: AppDatabase
 ) : WeatherRepository {
 
     private val currentWeatherState = MutableSharedFlow<WeatherEntity>(1)
     private val currentForecastState = MutableSharedFlow<List<WeatherEntity>>(1)
     private val currentAirPollutionState = MutableSharedFlow<AirPollutionEntity>(1)
-
-    private fun getCurrentLocation(): Location = appSettings.getCurrentLocation()
-
-    private fun setCurrentLocation(location: Location) {
-        appSettings.setCurrentLocation(location)
-    }
 
     override suspend fun listenCurrentWeatherState(): Flow<WeatherEntity> {
         getWeatherByCoordinates(getCurrentLocation().coordinates)
@@ -53,7 +47,7 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWeatherByCity(city: City) = wrapBackendExceptions {
-        delay(1000)
+        delay(500)
         val response = checkForFavorites(weatherSource.getWeatherByCity(city))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
@@ -69,7 +63,7 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWeatherByCoordinates(coordinates: Coordinates) = wrapBackendExceptions {
-        delay(1000)
+        delay(500)
         val response = checkForFavorites(weatherSource.getWeatherByCoordinates(coordinates))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
@@ -89,7 +83,7 @@ class WeatherRepositoryImpl @Inject constructor(
         val state = currentWeatherState.replayCache[0]
         state.location.isFavorite = true
         currentWeatherState.emit(state)
-        appDatabase.locationDao().insertLocation(state.location.toDB())
+        appDatabase.locationDao().insertLocation(state.location.toLocationDB())
     }
 
     override suspend fun removeFromFavorites() = wrapSQLiteException(Dispatchers.IO) {
@@ -114,4 +108,12 @@ class WeatherRepositoryImpl @Inject constructor(
             return@wrapSQLiteException response
         }
 
+    private suspend fun getCurrentLocation(): Location {
+        return appDatabase.lastLocationDao().getLastLocations(Const.LAST_LOCATION_KEY)?.toLocation()
+            ?: Location(Const.DEFAULT_CITY, Coordinates(Const.DEFAULT_LON, Const.DEFAULT_LAT))
+    }
+
+    private suspend fun setCurrentLocation(location: Location) {
+        appDatabase.lastLocationDao().insertLastLocation(location.toLastDB())
+    }
 }
