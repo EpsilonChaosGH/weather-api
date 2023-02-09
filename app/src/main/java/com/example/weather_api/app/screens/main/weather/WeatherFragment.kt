@@ -130,7 +130,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 searchByCoordinatesImageView.isEnabled = it.enableViews
 
                 cityNameTextView.text = it.cityName
-                countryTextView.text = it.country
+               // countryTextView.text = it.country
                 temperatureTextView.text = "${it.temperature}°C"
                 currentWeatherTextView.text = it.description
                 currentDateTextView.text = it.date
@@ -159,276 +159,276 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private fun observeAirState() {
         viewModel.airState.observe(viewLifecycleOwner) {
-            checkNo2(it)
-            checkPm10(it)
-            checkO3(it)
-            checkPm25(it)
+//            checkNo2(it)
+//            checkPm10(it)
+//            checkO3(it)
+//            checkPm25(it)
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun checkNo2(it: WeatherViewModel.AirState) {
-        when (it.no2Quality) {
-            AirQuality.Good -> {
-                binding.NO2QualityTextView.text = "Good"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-            AirQuality.Fair -> {
-                binding.NO2QualityTextView.text = "Fair"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-            AirQuality.Moderate -> {
-                binding.NO2QualityTextView.text = "Moderate"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.yellow
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-            AirQuality.Poor -> {
-                binding.NO2QualityTextView.text = "Poor"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.orange
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-            AirQuality.VeryPoor -> {
-                binding.NO2QualityTextView.text = "VeryPoor"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-            AirQuality.Error -> {
-                binding.NO2QualityTextView.text = "Error"
-                binding.NO2QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun checkPm10(it: WeatherViewModel.AirState) {
-        when (it.pm10Quality) {
-            AirQuality.Good -> {
-                binding.PM10QualityTextView.text = "Good"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-            AirQuality.Fair -> {
-                binding.PM10QualityTextView.text = "Fair"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-            AirQuality.Moderate -> {
-                binding.PM10QualityTextView.text = "Moderate"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.yellow
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-            AirQuality.Poor -> {
-                binding.PM10QualityTextView.text = "Poor"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.orange
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-            AirQuality.VeryPoor -> {
-                binding.PM10QualityTextView.text = "VeryPoor"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-            AirQuality.Error -> {
-                binding.PM10QualityTextView.text = "Error"
-                binding.PM10QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun checkO3(it: WeatherViewModel.AirState) {
-        when (it.o3Quality) {
-            AirQuality.Good -> {
-                binding.O3QualityTextView.text = "Good"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-            AirQuality.Fair -> {
-                binding.O3QualityTextView.text = "Fair"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-            AirQuality.Moderate -> {
-                binding.O3QualityTextView.text = "Moderate"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.yellow
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-            AirQuality.Poor -> {
-                binding.O3QualityTextView.text = "Poor"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.orange
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-            AirQuality.VeryPoor -> {
-                binding.O3QualityTextView.text = "VeryPoor"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-            AirQuality.Error -> {
-                binding.O3QualityTextView.text = "Error"
-                binding.O3QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun checkPm25(it: WeatherViewModel.AirState) {
-        when (it.pm25Quality) {
-            AirQuality.Good -> {
-                binding.PM25QualityTextView.text = "Good"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-            AirQuality.Fair -> {
-                binding.PM25QualityTextView.text = "Fair"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-            AirQuality.Moderate -> {
-                binding.PM25QualityTextView.text = "Moderate"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.yellow
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-            AirQuality.Poor -> {
-                binding.PM25QualityTextView.text = "Poor"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.orange
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-            AirQuality.VeryPoor -> {
-                binding.PM25QualityTextView.text = "VeryPoor"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-            AirQuality.Error -> {
-                binding.PM25QualityTextView.text = "Error"
-                binding.PM25QualityTextView.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
-            }
-        }
-    }
+//    @SuppressLint("SetTextI18n")
+//    private fun checkNo2(it: WeatherViewModel.AirState) {
+//        when (it.no2Quality) {
+//            AirQuality.Good -> {
+//                binding.NO2QualityTextView.text = "Good"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//            AirQuality.Fair -> {
+//                binding.NO2QualityTextView.text = "Fair"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//            AirQuality.Moderate -> {
+//                binding.NO2QualityTextView.text = "Moderate"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.yellow
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//            AirQuality.Poor -> {
+//                binding.NO2QualityTextView.text = "Poor"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.orange
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//            AirQuality.VeryPoor -> {
+//                binding.NO2QualityTextView.text = "VeryPoor"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.red
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//            AirQuality.Error -> {
+//                binding.NO2QualityTextView.text = "Error"
+//                binding.NO2QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.black
+//                    )
+//                )
+//                binding.NO2concentrationTextView.text = "${it.no2} μg/m3"
+//            }
+//        }
+//    }
+//
+//    @SuppressLint("SetTextI18n")
+//    private fun checkPm10(it: WeatherViewModel.AirState) {
+//        when (it.pm10Quality) {
+//            AirQuality.Good -> {
+//                binding.PM10QualityTextView.text = "Good"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//            AirQuality.Fair -> {
+//                binding.PM10QualityTextView.text = "Fair"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//            AirQuality.Moderate -> {
+//                binding.PM10QualityTextView.text = "Moderate"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.yellow
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//            AirQuality.Poor -> {
+//                binding.PM10QualityTextView.text = "Poor"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.orange
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//            AirQuality.VeryPoor -> {
+//                binding.PM10QualityTextView.text = "VeryPoor"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.red
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//            AirQuality.Error -> {
+//                binding.PM10QualityTextView.text = "Error"
+//                binding.PM10QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.black
+//                    )
+//                )
+//                binding.PM10concentrationTextView.text = "${it.pm10} μg/m3"
+//            }
+//        }
+//    }
+//
+//    @SuppressLint("SetTextI18n")
+//    private fun checkO3(it: WeatherViewModel.AirState) {
+//        when (it.o3Quality) {
+//            AirQuality.Good -> {
+//                binding.O3QualityTextView.text = "Good"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//            AirQuality.Fair -> {
+//                binding.O3QualityTextView.text = "Fair"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//            AirQuality.Moderate -> {
+//                binding.O3QualityTextView.text = "Moderate"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.yellow
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//            AirQuality.Poor -> {
+//                binding.O3QualityTextView.text = "Poor"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.orange
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//            AirQuality.VeryPoor -> {
+//                binding.O3QualityTextView.text = "VeryPoor"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.red
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//            AirQuality.Error -> {
+//                binding.O3QualityTextView.text = "Error"
+//                binding.O3QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.black
+//                    )
+//                )
+//                binding.O3concentrationTextView.text = "${it.o3} μg/m3"
+//            }
+//        }
+//    }
+//
+//    @SuppressLint("SetTextI18n")
+//    private fun checkPm25(it: WeatherViewModel.AirState) {
+//        when (it.pm25Quality) {
+//            AirQuality.Good -> {
+//                binding.PM25QualityTextView.text = "Good"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//            AirQuality.Fair -> {
+//                binding.PM25QualityTextView.text = "Fair"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.green
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//            AirQuality.Moderate -> {
+//                binding.PM25QualityTextView.text = "Moderate"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.yellow
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//            AirQuality.Poor -> {
+//                binding.PM25QualityTextView.text = "Poor"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.orange
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//            AirQuality.VeryPoor -> {
+//                binding.PM25QualityTextView.text = "VeryPoor"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.red
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//            AirQuality.Error -> {
+//                binding.PM25QualityTextView.text = "Error"
+//                binding.PM25QualityTextView.setTextColor(
+//                    ContextCompat.getColor(
+//                        requireContext(),
+//                        R.color.black
+//                    )
+//                )
+//                binding.PM25concentrationTextView.text = "${it.pm25} μg/m3"
+//            }
+//        }
+//    }
 
     private fun onGotLocationPermissionResult(granted: Boolean) {
         if (granted) {

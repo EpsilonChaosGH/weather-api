@@ -41,6 +41,7 @@
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/drawable/search_bg.xml" value="0.28" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/drawable/sky_moon_bg.xml" value="0.3165" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/drawable/splash.xml" value="0.292" />
+        <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/drawable/text_cursor.xml" value="0.3325" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/drawable/weather_bg.xml" value="0.292" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/activity_main.xml" value="0.4" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/activity_splash.xml" value="0.4" />
@@ -52,6 +53,7 @@
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_splash.xml" value="0.4" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_tabs.xml" value="0.4" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_weather.xml" value="0.4" />
+        <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_weather2.xml" value="0.4" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_weather_details.xml" value="0.32735042735042735" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/fragment_weather_new.xml" value="0.4" />
         <entry key="..\:/Users/darkn/AndroidStudioProjects/weatherapi/app/src/main/res/layout/item_favorite.xml" value="0.4" />

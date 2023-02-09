@@ -47,9 +47,8 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>
         val weather = favoritesList[position]
 
         with(holder.binding) {
-            countryTextView.text = weather.country
             cityNameTextView.text = weather.cityName
-            temperatureTextView.text = "${weather.temperature}°"
+            temperatureTextView.text = "${weather.temperature.toInt()}°C"
             currentDateTextView.text = dataToTime(weather.data)
             currentWeatherTextView.text = weather.description
 

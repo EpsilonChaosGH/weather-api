@@ -25,10 +25,13 @@
             android:exported="true"
             android:theme="@style/SplashActivity">
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".app.screens.main.MainActivity" />
+        <activity
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
+            android:name=".app.screens.main.MainActivity" />
     </application>
 </manifest>
