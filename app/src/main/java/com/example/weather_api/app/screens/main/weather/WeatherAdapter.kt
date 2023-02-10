@@ -12,8 +12,7 @@ import java.util.*
 import java.sql.Date
 
 
-class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
-
+class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
     class WeatherViewHolder(
         val binding: ItemWeatherForecastBinding
     ) : RecyclerView.ViewHolder(binding.root)

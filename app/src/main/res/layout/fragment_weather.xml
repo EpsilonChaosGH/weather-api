@@ -25,11 +25,11 @@
         android:layout_marginTop="@dimen/low_space"
         android:layout_marginEnd="@dimen/medium_space"
         android:hint="@string/hint_search_by_city"
+        android:textColorHint="@color/main_text_color"
+        app:hintTextColor="@color/main_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:hintTextColor="@color/main_text_color"
-        android:textColorHint="@color/main_text_color"
         tools:ignore="RtlSymmetry">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -39,8 +39,9 @@
             android:background="@drawable/layout_bg_weather"
             android:drawableStart="@drawable/ic_baseline_search"
             android:imeOptions="actionDone"
-            android:inputType="text"
+            android:inputType="textCapSentences"
             android:lines="1"
+            android:textColor="@color/main_text_color"
             android:textCursorDrawable="@drawable/text_cursor" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -106,21 +107,21 @@
         android:id="@+id/currentWeatherTextView"
         style="@style/WeatherDetailsTextView"
         android:layout_marginEnd="@dimen/low_space"
+        android:layout_marginBottom="@dimen/low_space"
         android:text="@string/test_weather_description"
         android:textColor="@color/white"
-        android:layout_marginBottom="@dimen/low_space"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/currentDateTextView"
         style="@style/WeatherDetailsTextView"
-        android:text="@string/test_date"
         android:layout_marginStart="@dimen/low_space"
-        android:textColor="@color/white"
         android:layout_marginBottom="@dimen/low_space"
+        android:text="@string/test_date"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"

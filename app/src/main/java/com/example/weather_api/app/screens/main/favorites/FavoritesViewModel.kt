@@ -39,4 +39,10 @@ class FavoritesViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteFromFavorites(citiName: String) {
+        viewModelScope.safeLaunch {
+            weatherRepository.deleteFromFavoritesByCity(citiName)
+        }
+    }
 }

@@ -17,7 +17,13 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
 
     private val binding by viewBinding(FragmentFavoriteBinding::bind)
 
-    private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { FavoriteAdapter() }
+    private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) {
+        FavoriteAdapter(object : FavoritesClickListener {
+            override fun deleteFromFavorites(citiName: String) {
+                viewModel.deleteFromFavorites(citiName)
+            }
+        })
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
