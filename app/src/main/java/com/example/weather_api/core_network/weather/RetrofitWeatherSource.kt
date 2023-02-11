@@ -1,13 +1,15 @@
 package com.example.weather_api.core_network.weather
 
 import com.example.weather_api.app.model.Const
+import com.example.weather_api.core_data.mappers.toAirPollutionEntity
+import com.example.weather_api.core_data.mappers.toWeather
+import com.example.weather_api.core_data.mappers.toWeatherList
 import com.example.weather_api.core_data.models.City
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_network.base.BaseRetrofitSource
 import com.example.weather_api.core_network.base.RetrofitConfig
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class RetrofitWeatherSource @Inject constructor(
