@@ -86,12 +86,20 @@ class WeatherRepositoryImpl @Inject constructor(
         appDatabase.locationDao().insertLocation(state.location.toLocationDB())
     }
 
-    override suspend fun removeFromFavorites() = wrapSQLiteException(Dispatchers.IO) {
+    override suspend fun deleteFromFavorites() = wrapSQLiteException(Dispatchers.IO) {
         val state = currentWeatherState.replayCache[0]
         state.location.isFavorite = false
         currentWeatherState.emit(state)
         appDatabase.locationDao().deleteLocation(state.location.city)
     }
+
+    override suspend fun deleteFromFavoritesByCity(citiName: String) =
+        wrapSQLiteException(Dispatchers.IO) {
+            val state = currentWeatherState.replayCache[0]
+            state.location.isFavorite = false
+            currentWeatherState.emit(state)
+            appDatabase.locationDao().deleteLocation(citiName)
+        }
 
     override suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
         wrapBackendExceptions {

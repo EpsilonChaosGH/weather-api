@@ -19,7 +19,8 @@ interface WeatherRepository {
     suspend fun getAirPollutionByCoordinate(coordinates: Coordinates)
 
     suspend fun addToFavorites()
-    suspend fun removeFromFavorites()
+    suspend fun deleteFromFavorites()
+    suspend fun deleteFromFavoritesByCity(citiName: String)
     suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity
 
 }

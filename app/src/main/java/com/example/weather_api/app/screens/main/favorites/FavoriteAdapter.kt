@@ -2,17 +2,25 @@ package com.example.weather_api.app.screens.main.favorites
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.R
+import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.databinding.ItemFavoriteBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.sql.Date
 
+interface FavoritesClickListener {
+    fun deleteFromFavorites(citiName: String)
+    fun showDetailsWeather(coordinates: Coordinates)
+}
 
-class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
+class FavoriteAdapter(
+    private val listener: FavoritesClickListener
+) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>(), View.OnClickListener {
 
     class FavoriteViewHolder(
         val binding: ItemFavoriteBinding
@@ -25,9 +33,20 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>
             notifyDataSetChanged()
         }
 
+    override fun onClick(v: View) {
+        val favorite = v.tag as WeatherEntity
+
+        when (v.id) {
+            R.id.favoriteImageView -> listener.deleteFromFavorites(favorite.cityName)
+            R.id.mainWeatherContainer -> listener.showDetailsWeather(favorite.location.coordinates)
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemFavoriteBinding.inflate(inflater, parent, false)
+        binding.favoriteImageView.setOnClickListener(this)
+        binding.mainWeatherContainer.setOnClickListener(this)
         return FavoriteViewHolder(binding)
     }
 
@@ -47,6 +66,8 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>
         val weather = favoritesList[position]
 
         with(holder.binding) {
+            favoriteImageView.tag = weather
+            mainWeatherContainer.tag = weather
             cityNameTextView.text = weather.cityName
             temperatureTextView.text = "${weather.temperature.toInt()}°C"
             currentDateTextView.text = dataToTime(weather.data)

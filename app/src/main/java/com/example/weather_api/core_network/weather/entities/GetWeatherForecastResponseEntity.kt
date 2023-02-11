@@ -1,10 +1,6 @@
 package com.example.weather_api.core_network.weather.entities
 
-import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.core_data.models.Location
-import com.example.weather_api.core_data.models.WeatherEntity
 import com.squareup.moshi.Json
-import java.sql.Date
 
 data class GetWeatherForecastResponseEntity(
     val cod: String,
@@ -97,33 +93,4 @@ data class GetWeatherForecastResponseEntity(
         val deg: Long,
         val gust: Double
     )
-
-    fun toWeatherList(): List<WeatherEntity> {
-        val weatherEntityList = mutableListOf<WeatherEntity>()
-
-        list.map {
-            weatherEntityList.add(
-                WeatherEntity(
-                    cityName = city.name,
-                    country = city.country,
-                    temperature = it.main.temp,
-                    mainWeather = it.weather.firstOrNull()?.main ?: "error",
-                    description = it.weather.firstOrNull()?.description ?: "error",
-                    feelsLike = it.main.feelsLike,
-                    humidity = it.main.humidity,
-                    pressure = it.main.pressure,
-                    windSpeed = it.wind.speed,
-                    data = Date((it.dt + city.timezone) * 1000),
-                    location = Location(
-                        city = city.name,
-                        Coordinates(
-                            lon = city.coord.lon.toString(),
-                            lat = city.coord.lat.toString()
-                        )
-                    )
-                )
-            )
-        }
-        return weatherEntityList
-    }
 }

@@ -99,7 +99,7 @@ class WeatherViewModel @Inject constructor(
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
             if (state.value!!.isFavorite) {
-                weatherRepository.removeFromFavorites()
+                weatherRepository.deleteFromFavorites()
             } else {
                 weatherRepository.addToFavorites()
             }

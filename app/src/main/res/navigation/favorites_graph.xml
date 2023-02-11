@@ -9,5 +9,10 @@
         android:id="@+id/favoritesFragment"
         android:name="com.example.weather_api.app.screens.main.favorites.FavoritesFragment"
         android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_main_graph"
+            app:destination="@id/main_graph" />
+    </fragment>
+    <include app:graph="@navigation/weather_graph" />
 </navigation>
