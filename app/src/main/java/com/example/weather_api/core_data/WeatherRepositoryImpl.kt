@@ -106,6 +106,10 @@ class WeatherRepositoryImpl @Inject constructor(
             return weatherSource.getWeatherByCoordinates(coordinates)
         }
 
+    override suspend fun setCurrentLocation(location: Location) {
+        appDatabase.lastLocationDao().insertLastLocation(location.toLastDB())
+    }
+
     private suspend fun checkForFavorites(response: WeatherEntity): WeatherEntity =
         wrapSQLiteException(Dispatchers.IO) {
             appDatabase.locationDao().getAllLocations().forEach { locationDb ->
@@ -119,9 +123,5 @@ class WeatherRepositoryImpl @Inject constructor(
     private suspend fun getCurrentLocation(): Location {
         return appDatabase.lastLocationDao().getLastLocations(Const.LAST_LOCATION_KEY)?.toLocation()
             ?: Location(Const.DEFAULT_CITY, Coordinates(Const.DEFAULT_LON, Const.DEFAULT_LAT))
-    }
-
-    private suspend fun setCurrentLocation(location: Location) {
-        appDatabase.lastLocationDao().insertLastLocation(location.toLastDB())
     }
 }

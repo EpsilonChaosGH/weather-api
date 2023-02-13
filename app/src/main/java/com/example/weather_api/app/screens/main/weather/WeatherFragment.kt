@@ -8,7 +8,9 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,18 +18,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
-import com.example.weather_api.app.model.AirQuality
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.core_data.models.City
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
+import com.facebook.shimmer.Shimmer
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
@@ -35,6 +39,15 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     override val viewModel by viewModels<WeatherViewModel>()
 
     private val binding by viewBinding(FragmentWeatherBinding::bind)
+
+    private val shimmer by lazy {
+        Shimmer.ColorHighlightBuilder()
+            .setBaseColor(ContextCompat.getColor(requireContext(), R.color.main_secondary_color))
+            .setHighlightColor(ContextCompat.getColor(requireContext(), R.color.white))
+            .setBaseAlpha(1f)
+            .setHighlightAlpha(1f)
+            .build()
+    }
 
     private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { WeatherAdapter() }
 
@@ -47,13 +60,16 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         ::onGotLocationPermissionResult
     )
 
+    @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         with(binding) {
+            binding.veilLayout.shimmer = shimmer
+            binding.veilLayout.veil()
 
             recyclerView.adapter = adapter
-
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -69,8 +85,8 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 }
                 false
             })
-            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
 
+            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
             searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
 
@@ -80,7 +96,10 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     }
 
     private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherAndForecastAndAirByCity(City(city))
+        lifecycleScope.launchWhenCreated {
+            viewModel.getWeatherAndForecastAndAirByCity(City(city)).join()
+            binding.veilLayout.unVeil()
+        }
     }
 
     private fun addOrRemoveToFavorite() {
@@ -106,11 +125,15 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                         lat = location.latitude.toString(),
                         lon = location.longitude.toString()
                     )
-                    viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates)
+                    lifecycleScope.launchWhenCreated {
+                        viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates).join()
+                        binding.veilLayout.unVeil()
+                    }
                 } else {
                     viewModel.showToast(R.string.error_gps_not_found)
                 }
             }
+
     }
 
     private fun observeForecastState() {
@@ -130,7 +153,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 searchByCoordinatesImageView.isEnabled = it.enableViews
 
                 cityNameTextView.text = it.cityName
-               // countryTextView.text = it.country
+                // countryTextView.text = it.country
                 temperatureTextView.text = "${it.temperature}°C"
                 currentWeatherTextView.text = it.description
                 currentDateTextView.text = it.date

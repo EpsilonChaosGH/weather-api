@@ -23,4 +23,5 @@ interface WeatherRepository {
     suspend fun deleteFromFavoritesByCity(citiName: String)
     suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity
 
+    suspend fun setCurrentLocation(location: Location)
 }

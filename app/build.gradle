@@ -75,9 +75,12 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
+
     //ViewBindDelegate
     api 'com.github.kirich1409:viewbindingpropertydelegate:1.4.4'
     api 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.6'
+
+    implementation "com.github.skydoves:androidveil:1.1.3"
 }
 
 kapt {

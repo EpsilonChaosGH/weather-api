@@ -44,6 +44,7 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             weatherRepository.listenCurrentWeatherState().collect { weather ->
                 setState(weather)
+                hideProgress()
             }
         }
         viewModelScope.launch {
@@ -58,7 +59,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun getWeatherAndForecastAndAirByCity(city: City) {
+    fun getWeatherAndForecastAndAirByCity(city: City) =
         viewModelScope.launch {
             showProgress()
             val weatherJob = safeLaunch {
@@ -75,9 +76,9 @@ class WeatherViewModel @Inject constructor(
             airJob.join()
             hideProgress()
         }
-    }
 
-    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) {
+
+    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) =
         viewModelScope.launch {
             showProgress()
             val weatherJob = safeLaunch {
@@ -94,7 +95,7 @@ class WeatherViewModel @Inject constructor(
             forecastJob.join()
             hideProgress()
         }
-    }
+
 
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
@@ -130,7 +131,7 @@ class WeatherViewModel @Inject constructor(
             temperature = weather.temperature.toInt().toString(),
             mainWeather = weather.mainWeather,
             description = weather.description,
-            feelsLike = weather.feelsLike.toString(),
+            feelsLike = weather.feelsLike.toInt().toString(),
             humidity = weather.humidity.toString(),
             pressure = weather.pressure.toString(),
             windSpeed = weather.windSpeed.toString(),
@@ -172,19 +173,19 @@ class WeatherViewModel @Inject constructor(
     )
 
     data class State(
-        val cityName: String = "...",
+        val cityName: String = ".............",
         val country: String = "...",
-        val temperature: String = "0.0",
-        val description: String = "...",
-        val mainWeather: String = "...",
-        val feelsLike: String = "0.0",
-        val humidity: String = "0.0",
-        val pressure: String = "0.0",
-        val windSpeed: String = "0.0",
-        val date: String = "...",
+        val temperature: String = "000",
+        val description: String = ".............",
+        val mainWeather: String = ".............",
+        val feelsLike: String = "000",
+        val humidity: String = "000",
+        val pressure: String = "000",
+        val windSpeed: String = "000",
+        val date: String = ".............",
         val isFavorite: Boolean = false,
         val emptyCityError: Boolean = false,
-        val weatherInProgress: Boolean = false
+        val weatherInProgress: Boolean = true
     ) {
         val showProgress: Boolean get() = weatherInProgress
         val enableViews: Boolean get() = !weatherInProgress

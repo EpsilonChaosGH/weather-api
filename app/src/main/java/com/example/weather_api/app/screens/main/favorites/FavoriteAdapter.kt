@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.R
-import com.example.weather_api.core_data.models.Coordinates
+import com.example.weather_api.core_data.models.Location
 import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.databinding.ItemFavoriteBinding
 import java.text.SimpleDateFormat
@@ -15,7 +15,7 @@ import java.sql.Date
 
 interface FavoritesClickListener {
     fun deleteFromFavorites(citiName: String)
-    fun showDetailsWeather(coordinates: Coordinates)
+    fun showDetailsWeather(location: Location)
 }
 
 class FavoriteAdapter(
@@ -38,7 +38,7 @@ class FavoriteAdapter(
 
         when (v.id) {
             R.id.favoriteImageView -> listener.deleteFromFavorites(favorite.cityName)
-            R.id.mainWeatherContainer -> listener.showDetailsWeather(favorite.location.coordinates)
+            R.id.mainWeatherContainer -> listener.showDetailsWeather(favorite.location)
         }
     }
 
