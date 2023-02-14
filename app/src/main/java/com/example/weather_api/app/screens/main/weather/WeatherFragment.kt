@@ -19,15 +19,19 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
-import com.example.weather_api.app.model.AirQuality
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.core_data.models.City
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
+import com.example.weather_api.app.utils.observeEvent
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
+import com.facebook.shimmer.Shimmer
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
@@ -35,6 +39,15 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     override val viewModel by viewModels<WeatherViewModel>()
 
     private val binding by viewBinding(FragmentWeatherBinding::bind)
+
+    private val shimmer by lazy {
+        Shimmer.ColorHighlightBuilder()
+            .setBaseColor(ContextCompat.getColor(requireContext(), R.color.main_secondary_color))
+            .setHighlightColor(ContextCompat.getColor(requireContext(), R.color.main_text_color))
+            .setBaseAlpha(1f)
+            .setHighlightAlpha(1f)
+            .build()
+    }
 
     private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { WeatherAdapter() }
 
@@ -47,13 +60,14 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         ::onGotLocationPermissionResult
     )
 
+    @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            veilLayout.shimmer = shimmer
 
             recyclerView.adapter = adapter
-
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -69,18 +83,32 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 }
                 false
             })
-            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
 
+            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
             searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
 
         observeForecastState()
         observeWeatherState()
         observeAirState()
+        showVeil()
+        hideVail()
+    }
+
+    private fun showVeil(){
+        viewModel.showVeilEvent.observeEvent(viewLifecycleOwner) {
+            binding.veilLayout.veil()
+        }
+    }
+
+    private fun hideVail(){
+        viewModel.hideVeilEvent.observeEvent(viewLifecycleOwner) {
+            binding.veilLayout.unVeil()
+        }
     }
 
     private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherAndForecastAndAirByCity(City(city))
+            viewModel.getWeatherAndForecastAndAirByCity(City(city))
     }
 
     private fun addOrRemoveToFavorite() {
@@ -106,7 +134,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                         lat = location.latitude.toString(),
                         lon = location.longitude.toString()
                     )
-                    viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates)
+                        viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates)
                 } else {
                     viewModel.showToast(R.string.error_gps_not_found)
                 }
@@ -121,25 +149,24 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     @SuppressLint("SetTextI18n")
     private fun observeWeatherState() {
-        viewModel.state.observe(viewLifecycleOwner) {
+        viewModel.weatherState.observe(viewLifecycleOwner) { weatherState ->
             with(binding) {
                 cityEditText.error =
-                    if (it.emptyCityError) getString(R.string.error_field_is_empty) else null
+                    if (weatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
 
-                cityTextInput.isEnabled = it.enableViews
-                searchByCoordinatesImageView.isEnabled = it.enableViews
+                cityTextInput.isEnabled = weatherState.enableViews
+                searchByCoordinatesImageView.isEnabled = weatherState.enableViews
 
-                cityNameTextView.text = it.cityName
-               // countryTextView.text = it.country
-                temperatureTextView.text = "${it.temperature}°C"
-                currentWeatherTextView.text = it.description
-                currentDateTextView.text = it.date
-                feelsLikeTextView.text = "${it.feelsLike}°"
-                humidityTextView.text = "${it.humidity} %"
-                pressureTextView.text = "${it.pressure} hPa"
-                windSpeedTextView.text = "${it.windSpeed} m/s"
+                cityNameTextView.text = weatherState.weather.cityName
+                temperatureTextView.text = "${weatherState.weather.temperature.toInt()}°C"
+                currentWeatherTextView.text = weatherState.weather.description
+                currentDateTextView.text = dataToString(weatherState.weather.data)
+                feelsLikeTextView.text = "${weatherState.weather.feelsLike.toInt()}°"
+                humidityTextView.text = "${weatherState.weather.humidity} %"
+                pressureTextView.text = "${weatherState.weather.pressure} hPa"
+                windSpeedTextView.text = "${weatherState.weather.windSpeed.toInt()} m/s"
 
-                when (it.mainWeather) {
+                when (weatherState.weather.mainWeather) {
                     "Clear" -> weatherIconImageView.setImageResource(R.drawable.ic_sun)
                     "Clouds" -> weatherIconImageView.setImageResource(R.drawable.ic_cloud)
                     "Rain" -> weatherIconImageView.setImageResource(R.drawable.ic_heavey_rain)
@@ -148,12 +175,23 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                     else -> weatherIconImageView.setImageResource(R.drawable.ic_cloudy)
                 }
 
-                if (it.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+                if (weatherState.weather.location.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
                 else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
                 progressBar.visibility =
-                    if (it.showProgress) View.VISIBLE else View.INVISIBLE
+                    if (weatherState.showProgress) View.VISIBLE else View.INVISIBLE
             }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun dataToString(data: Date): String {
+        return try {
+            val sdf = SimpleDateFormat("EEE, d MMMM HH:mm")
+            sdf.timeZone = TimeZone.getTimeZone("UTC")
+            sdf.format(data)
+        } catch (e: Exception) {
+            e.toString()
         }
     }
 

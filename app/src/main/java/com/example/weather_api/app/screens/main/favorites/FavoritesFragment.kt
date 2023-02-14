@@ -2,17 +2,14 @@ package com.example.weather_api.app.screens.main.favorites
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
 import com.example.weather_api.app.screens.base.BaseFragment
-import com.example.weather_api.core_data.models.Coordinates
+import com.example.weather_api.core_data.models.Location
 import com.example.weather_api.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,11 +26,9 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
                 viewModel.deleteFromFavorites(citiName)
             }
 
-            override fun showDetailsWeather(coordinates: Coordinates) {
-                lifecycleScope.launchWhenStarted {
-                    viewModel.showDetailsWeather(coordinates).join()
-                    findNavController().navigate(R.id.action_favoritesFragment_to_main_graph)
-                }
+            override fun showDetailsWeather(location: Location) {
+                viewModel.setCurrentLocation(location)
+                findNavController().navigate(R.id.action_favoritesFragment_to_weather_graph)
             }
         })
     }
@@ -43,7 +38,6 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
 
         with(binding) {
             recyclerView.adapter = adapter
-
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }

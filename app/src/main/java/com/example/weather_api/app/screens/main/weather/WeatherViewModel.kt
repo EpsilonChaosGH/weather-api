@@ -1,6 +1,5 @@
 package com.example.weather_api.app.screens.main.weather
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.AirQuality
@@ -16,9 +15,6 @@ import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.core_data.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,14 +23,20 @@ class WeatherViewModel @Inject constructor(
     logger: Logger
 ) : BaseViewModel(weatherRepository, logger) {
 
-    private val _state = MutableLiveData(State())
-    val state = _state.share()
+    private val _weatherState = MutableLiveData<WeatherState>()
+    val weatherState = _weatherState.share()
+
+    private val _forecastState = MutableLiveData<List<WeatherEntity>>()
+    val forecastState = _forecastState.share()
 
     private val _airState = MutableLiveData(AirState())
     val airState = _airState.share()
 
-    private val _forecastState = MutableLiveData<List<WeatherEntity>>()
-    val forecastState = _forecastState.share()
+    private val _showVeilEvent = MutableUnitLiveEvent()
+    val showVeilEvent = _showVeilEvent.share()
+
+    private val _hideVeilEvent = MutableUnitLiveEvent()
+    val hideVeilEvent = _hideVeilEvent.share()
 
     init {
         listenCurrentState()
@@ -42,8 +44,10 @@ class WeatherViewModel @Inject constructor(
 
     private fun listenCurrentState() {
         viewModelScope.launch {
+            _showVeilEvent.publishEvent()
             weatherRepository.listenCurrentWeatherState().collect { weather ->
-                setState(weather)
+                _weatherState.value = WeatherState(weather = weather)
+                _hideVeilEvent.publishEvent()
             }
         }
         viewModelScope.launch {
@@ -78,8 +82,8 @@ class WeatherViewModel @Inject constructor(
     }
 
     fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) {
+        showProgress()
         viewModelScope.launch {
-            showProgress()
             val weatherJob = safeLaunch {
                 weatherRepository.getWeatherByCoordinates(coordinates)
             }
@@ -98,7 +102,7 @@ class WeatherViewModel @Inject constructor(
 
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
-            if (state.value!!.isFavorite) {
+            if (weatherState.value!!.weather.location.isFavorite) {
                 weatherRepository.deleteFromFavorites()
             } else {
                 weatherRepository.addToFavorites()
@@ -107,35 +111,8 @@ class WeatherViewModel @Inject constructor(
     }
 
     fun emptyFieldException(e: EmptyFieldException) {
-        _state.value = _state.requireValue().copy(
+        _weatherState.value = _weatherState.requireValue().copy(
             emptyCityError = e.field == Field.City
-        )
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun dataToString(data: Date): String {
-        return try {
-            val sdf = SimpleDateFormat("EEE, d MMMM HH:mm")
-            sdf.timeZone = TimeZone.getTimeZone("UTC")
-            sdf.format(data)
-        } catch (e: Exception) {
-            e.toString()
-        }
-    }
-
-    private fun setState(weather: WeatherEntity) {
-        _state.value = _state.requireValue().copy(
-            cityName = weather.cityName,
-            country = weather.country,
-            temperature = weather.temperature.toInt().toString(),
-            mainWeather = weather.mainWeather,
-            description = weather.description,
-            feelsLike = weather.feelsLike.toString(),
-            humidity = weather.humidity.toString(),
-            pressure = weather.pressure.toString(),
-            windSpeed = weather.windSpeed.toString(),
-            date = dataToString(weather.data),
-            isFavorite = weather.location.isFavorite
         )
     }
 
@@ -153,11 +130,12 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun showProgress() {
-        _state.value = _state.requireValue().copy(emptyCityError = false, weatherInProgress = true)
+        _weatherState.value =
+            _weatherState.requireValue().copy(emptyCityError = false, weatherInProgress = true)
     }
 
     private fun hideProgress() {
-        _state.value = _state.requireValue().copy(weatherInProgress = false)
+        _weatherState.value = _weatherState.requireValue().copy(weatherInProgress = false)
     }
 
     data class AirState(
@@ -171,18 +149,8 @@ class WeatherViewModel @Inject constructor(
         val pm25Quality: AirQuality = AirQuality.Error,
     )
 
-    data class State(
-        val cityName: String = "...",
-        val country: String = "...",
-        val temperature: String = "0.0",
-        val description: String = "...",
-        val mainWeather: String = "...",
-        val feelsLike: String = "0.0",
-        val humidity: String = "0.0",
-        val pressure: String = "0.0",
-        val windSpeed: String = "0.0",
-        val date: String = "...",
-        val isFavorite: Boolean = false,
+    data class WeatherState(
+        val weather: WeatherEntity,
         val emptyCityError: Boolean = false,
         val weatherInProgress: Boolean = false
     ) {
