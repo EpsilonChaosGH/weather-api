@@ -278,4 +278,6 @@
             app:layout_constraintStart_toStartOf="@+id/weatherIconImageView"
             app:layout_constraintTop_toTopOf="@+id/weatherIconImageView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </com.skydoves.androidveil.VeilLayout>
