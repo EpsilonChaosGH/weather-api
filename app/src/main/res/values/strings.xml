@@ -20,13 +20,40 @@
     <string name="permissions_denied_forever">Unable to search weather by GPS. Go to
         Settings > Permissions, then allow the location permissions, and try again:</string>
 
+    <!-- Air quality -->
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="moderate">Moderate</string>
+    <string name="poor">Poor</string>
+    <string name="very_poor">Very poor</string>
+    <string name="error">Error</string>
+
+    <!-- Weather icons -->
+    <string name="clear_sky">01d</string>
+    <string name="few_clouds">02d</string>
+    <string name="scattered_clouds">03d</string>
+    <string name="broken_clouds">04d</string>
+    <string name="shower_rain">09d</string>
+    <string name="rain">10d</string>
+    <string name="thunderstorm">11d</string>
+    <string name="snow">13d</string>
+    <string name="mist">50d</string>
+
+    <!-- Weather night icons -->
+    <string name="clear_sky_night">01n</string>
+    <string name="few_clouds_night">02n</string>
+    <string name="scattered_clouds_night">03n</string>
+    <string name="broken_clouds_night">04n</string>
+    <string name="shower_rain_night">09n</string>
+    <string name="rain_night">10n</string>
+    <string name="thunderstorm_night">11n</string>
+    <string name="snow_night">13n</string>
+    <string name="mist_night">50n</string>
+
+    <string name="unknown">unknown</string>
+
     <!-- UI -->
     <string name="hint_search_by_city">Search by city</string>
-
-
-    <string name="humidity_info">Humidity: %1$d%%</string>
-
-
 
     <string name="test_weather_description">broken clouds</string>
     <string name="test_date">Tue, 8 December 15:00</string>

@@ -5,19 +5,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.R
-import com.example.weather_api.core_data.models.WeatherEntity
+import com.example.weather_api.app.model.WeatherState
+import com.example.weather_api.app.utils.FORMAT_EEE_HH_mm
+import com.example.weather_api.app.utils.toTime
 import com.example.weather_api.databinding.ItemWeatherForecastBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.sql.Date
 
 
-class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
+class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
     class WeatherViewHolder(
         val binding: ItemWeatherForecastBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    var weatherList = listOf<WeatherEntity>()
+    var weatherList = listOf<WeatherState>()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
@@ -30,30 +32,15 @@ class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>(
         return WeatherViewHolder(binding)
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun dataToTime(data: Date): String? {
-        return try {
-            val sdf = SimpleDateFormat("EEE, HH:mm")
-            sdf.timeZone = TimeZone.getTimeZone("UTC")
-            sdf.format(data)
-        } catch (e: Exception) {
-            e.toString()
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         val weather = weatherList[position]
 
-        holder.binding.timeTextView.text = dataToTime(weather.data)
-        holder.binding.temperatureTextView.text = "${weather.temperature.toInt()}°"
-        when (weather.mainWeather) {
-            "Clear" -> holder.binding.imageView.setImageResource(R.drawable.ic_sun)
-            "Clouds" -> holder.binding.imageView.setImageResource(R.drawable.ic_cloud)
-            "Rain" -> holder.binding.imageView.setImageResource(R.drawable.ic_heavey_rain)
-            "Snow" -> holder.binding.imageView.setImageResource(R.drawable.ic_winter)
-            "Mist" -> holder.binding.imageView.setImageResource(R.drawable.ic_fog)
-            else -> holder.binding.imageView.setImageResource(R.drawable.ic_cloudy)
+        with(holder.binding) {
+
+            holder.binding.timeTextView.text = weather.data
+            holder.binding.temperatureTextView.text = weather.temperature
+
+            imageView.setImageResource(weather.weatherType.iconResId)
         }
     }
 

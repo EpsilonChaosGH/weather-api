@@ -2,20 +2,19 @@ package com.example.weather_api.app.screens.main.weather
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_api.app.model.AirQuality
-import com.example.weather_api.app.model.Field
-import com.example.weather_api.core_data.models.AirPollutionEntity
-import com.example.weather_api.core_data.models.City
-import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.core_data.models.WeatherEntity
+import com.example.weather_api.app.model.*
 import com.example.weather_api.app.screens.base.BaseViewModel
 import com.example.weather_api.app.utils.*
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.core_data.WeatherRepository
+import com.example.weather_api.core_data.mappers.toAirPollutionState
+import com.example.weather_api.core_data.mappers.toWeatherState
+import com.example.weather_api.core_data.models.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
@@ -26,10 +25,10 @@ class WeatherViewModel @Inject constructor(
     private val _weatherState = MutableLiveData<WeatherState>()
     val weatherState = _weatherState.share()
 
-    private val _forecastState = MutableLiveData<List<WeatherEntity>>()
+    private val _forecastState = MutableLiveData<List<WeatherState>>()
     val forecastState = _forecastState.share()
 
-    private val _airState = MutableLiveData(AirState())
+    private val _airState = MutableLiveData<AirPollutionState>()
     val airState = _airState.share()
 
     private val _showVeilEvent = MutableUnitLiveEvent()
@@ -46,18 +45,18 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             _showVeilEvent.publishEvent()
             weatherRepository.listenCurrentWeatherState().collect { weather ->
-                _weatherState.value = WeatherState(weather = weather)
+                _weatherState.value = weather.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm)
                 _hideVeilEvent.publishEvent()
             }
         }
         viewModelScope.launch {
             weatherRepository.listenCurrentForecastState().collect { forecast ->
-                _forecastState.value = forecast
+                _forecastState.value = forecast.map { it.toWeatherState(FORMAT_EEE_HH_mm) }
             }
         }
         viewModelScope.launch {
             weatherRepository.listenCurrentAirPollutionState().collect { airPollution ->
-                setAirState(airPollution)
+                _airState.value = airPollution.toAirPollutionState()
             }
         }
     }
@@ -102,7 +101,7 @@ class WeatherViewModel @Inject constructor(
 
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
-            if (weatherState.value!!.weather.location.isFavorite) {
+            if (weatherState.value!!.location.isFavorite) {
                 weatherRepository.deleteFromFavorites()
             } else {
                 weatherRepository.addToFavorites()
@@ -116,19 +115,6 @@ class WeatherViewModel @Inject constructor(
         )
     }
 
-    private fun setAirState(airPollutionEntity: AirPollutionEntity) {
-        _airState.value = _airState.requireValue().copy(
-            no2 = airPollutionEntity.no2.toString(),
-            no2Quality = airPollutionEntity.no2Quality,
-            pm10 = airPollutionEntity.pm10.toString(),
-            pm10Quality = airPollutionEntity.pm10Quality,
-            o3 = airPollutionEntity.o3.toString(),
-            o3Quality = airPollutionEntity.o3Quality,
-            pm25 = airPollutionEntity.pm2_5.toString(),
-            pm25Quality = airPollutionEntity.pm2_5Quality
-        )
-    }
-
     private fun showProgress() {
         _weatherState.value =
             _weatherState.requireValue().copy(emptyCityError = false, weatherInProgress = true)
@@ -136,25 +122,5 @@ class WeatherViewModel @Inject constructor(
 
     private fun hideProgress() {
         _weatherState.value = _weatherState.requireValue().copy(weatherInProgress = false)
-    }
-
-    data class AirState(
-        val no2: String = "...",
-        val no2Quality: AirQuality = AirQuality.Error,
-        val pm10: String = "...",
-        val pm10Quality: AirQuality = AirQuality.Error,
-        val o3: String = "...",
-        val o3Quality: AirQuality = AirQuality.Error,
-        val pm25: String = "...",
-        val pm25Quality: AirQuality = AirQuality.Error,
-    )
-
-    data class WeatherState(
-        val weather: WeatherEntity,
-        val emptyCityError: Boolean = false,
-        val weatherInProgress: Boolean = false
-    ) {
-        val showProgress: Boolean get() = weatherInProgress
-        val enableViews: Boolean get() = !weatherInProgress
     }
 }
