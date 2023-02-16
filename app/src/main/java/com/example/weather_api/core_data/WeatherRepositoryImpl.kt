@@ -1,5 +1,6 @@
 package com.example.weather_api.core_data
 
+import android.util.Log
 import com.example.weather_api.app.model.Const
 import com.example.weather_api.core_data.mappers.toLastDB
 import com.example.weather_api.core_data.mappers.toLocationDB
@@ -8,8 +9,8 @@ import com.example.weather_api.core_data.models.*
 import com.example.weather_api.core_db.room.AppDatabase
 import com.example.weather_api.core_network.weather.WeatherSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,7 +48,6 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWeatherByCity(city: City) = wrapBackendExceptions {
-        delay(500)
         val response = checkForFavorites(weatherSource.getWeatherByCity(city))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
@@ -63,7 +63,6 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWeatherByCoordinates(coordinates: Coordinates) = wrapBackendExceptions {
-        delay(500)
         val response = checkForFavorites(weatherSource.getWeatherByCoordinates(coordinates))
         currentWeatherState.emit(response)
         setCurrentLocation(response.location)
@@ -103,7 +102,9 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
         wrapBackendExceptions {
-            return weatherSource.getWeatherByCoordinates(coordinates)
+            withContext(Dispatchers.IO) {
+                return@withContext weatherSource.getWeatherByCoordinates(coordinates)
+            }
         }
 
     override suspend fun setCurrentLocation(location: Location) {

@@ -11,4 +11,5 @@ object Const {
     const val UNITS = "metric"
     const val LANG_RU = "ru"
     const val CNT = "24"
+    const val DELAY_FOR_TEST_REQUEST = 0L
 }

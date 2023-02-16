@@ -1,6 +1,6 @@
 # Weather-api
 
-Weather-api is a simple weather forecast app, which uses some APIs to fetch 3 day / 3 hour forecast data from the [OpenWeatherMap](https://openweathermap.org/api).
+Weather-api is a simple weather and air pollution forecast application that uses some APIs to get 3 day / 3 hour forecast data from [OpenWeatherMap](https://openweathermap.org/api).
 
 ### Architecture
 
@@ -12,19 +12,19 @@ Weather-api is a simple weather forecast app, which uses some APIs to fetch 3 da
 
 ### Preview
 <p align="center">
-<img src="Screenshot_weather.png" width="49%"/>
-<img src="Screenshot_favorites.png" width="49%"/>/>
+<img src="Screenshot_weather_1.png" width="49%"/>
+<img src="Screenshot_favorites_1.png" width="49%"/>/>
 </p>
 
 ### Libraries and tools 🛠
 
 * Navigation component
-* Shared Preferences
 * ViewModel
 * LiveData
-* Data Binding
 * RoomDB
 * Hilt
 * Retrofit
 * OkHttp
 * Moshi
+* ViewBindingPropertyDelegate
+* AndroidVeil

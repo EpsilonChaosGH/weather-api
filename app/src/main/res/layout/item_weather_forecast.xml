@@ -9,12 +9,12 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_winter_w" />
+        app:srcCompat="@drawable/ic_winter" />
 
     <TextView
         android:id="@+id/temperatureTextView"
@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/low_space"
         android:text="@string/test_temperature"
         android:textColor="@color/main_text_color"
-        android:textSize="32sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/timeTextView"
         app:layout_constraintStart_toStartOf="@+id/timeTextView"

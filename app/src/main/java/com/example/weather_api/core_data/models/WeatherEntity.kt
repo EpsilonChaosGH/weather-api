@@ -6,7 +6,7 @@ data class WeatherEntity(
     val cityName: String,
     val country: String,
     val temperature: Double,
-    val mainWeather: String,
+    val icon: String,
     val description: String,
     val feelsLike: Double,
     val humidity: Long,
