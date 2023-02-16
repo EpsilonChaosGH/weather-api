@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/low_space"
         android:text="@string/test_temperature"
         android:textColor="@color/main_text_color"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/timeTextView"
         app:layout_constraintStart_toStartOf="@+id/timeTextView"

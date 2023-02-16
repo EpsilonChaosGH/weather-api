@@ -14,7 +14,6 @@ import com.example.weather_api.core_data.models.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(

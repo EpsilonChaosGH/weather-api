@@ -14,13 +14,13 @@ fun GetAirPollutionRepositoryEntity.toAirPollutionEntity() = AirPollutionEntity(
 )
 
 fun AirPollutionEntity.toAirPollutionState() = AirPollutionState(
-    no2 = no2.roundToInt().toString(),
+    no2 = "${no2.roundToInt()} μg/m3",
     no2Quality = checkNo2(no2),
-    o3 = o3.roundToInt().toString(),
+    o3 = "${o3.roundToInt()} μg/m3",
     o3Quality = checkO3(o3),
-    pm10 = pm10.roundToInt().toString(),
+    pm10 = "${pm10.roundToInt()} μg/m3",
     pm10Quality = checkPm10(pm10),
-    pm25 = pm25.roundToInt().toString(),
+    pm25 = "${pm25.roundToInt()} μg/m3",
     pm25Quality = checkPm25(pm25),
 )
 

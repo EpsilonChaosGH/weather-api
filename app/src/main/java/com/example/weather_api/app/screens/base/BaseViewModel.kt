@@ -31,7 +31,7 @@ open class BaseViewModel(
     }
 
     fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch {
+        viewModelScope.launch() {
             try {
                 block.invoke(this)
             } catch (e: ConnectionException) {

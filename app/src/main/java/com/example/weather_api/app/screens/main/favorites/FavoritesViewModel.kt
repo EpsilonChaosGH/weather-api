@@ -3,10 +3,8 @@ package com.example.weather_api.app.screens.main.favorites
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.WeatherState
-import com.example.weather_api.app.model.WeatherType
 import com.example.weather_api.app.screens.base.BaseViewModel
 import com.example.weather_api.app.utils.FORMAT_EEE_d_MMMM_HH_mm
-import com.example.weather_api.app.utils.format
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.share
 import com.example.weather_api.core_data.WeatherRepository
@@ -14,9 +12,10 @@ import com.example.weather_api.core_data.mappers.toWeatherState
 import com.example.weather_api.core_data.models.Location
 import com.example.weather_api.core_data.models.WeatherEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 
 @HiltViewModel
@@ -35,12 +34,14 @@ class FavoritesViewModel @Inject constructor(
     private fun listenCurrentState() {
         viewModelScope.safeLaunch {
             weatherRepository.listenCurrentFavoritesLocations().collect { list ->
-                val favorites = mutableListOf<WeatherEntity>()
+                val favoritesDef = mutableListOf<Deferred<WeatherEntity>>()
                 list.map {
-                    launch {
-                        favorites.add(weatherRepository.getFavoriteWeatherByCoordinates(it.coordinates))
-                    }.join()
+                    val response = async {
+                        return@async weatherRepository.getFavoriteWeatherByCoordinates(it.coordinates)
+                    }
+                    favoritesDef.add(response)
                 }
+                val favorites = favoritesDef.map { it.await() }.toMutableList()
                 favorites.sortBy { it.cityName }
                 _favoritesState.value = favorites.map { it.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm) }
             }
