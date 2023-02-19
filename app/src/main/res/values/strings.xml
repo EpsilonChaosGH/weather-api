@@ -67,7 +67,7 @@
     <string name="test_pressure">1001</string>
     <string name="test_wind_speed">2.9</string>
     <string name="test_air_quality">Good</string>
-    <string name="test_air_concentration">12.3 μg/m3</string>
+    <string name="test_air_concentration">55 μg/m3</string>
 
     <string name="title_feels_like">Feels like</string>
     <string name="title_humidity">Humidity</string>
