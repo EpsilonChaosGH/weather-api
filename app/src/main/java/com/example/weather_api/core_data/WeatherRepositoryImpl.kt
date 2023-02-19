@@ -1,6 +1,5 @@
 package com.example.weather_api.core_data
 
-import android.util.Log
 import com.example.weather_api.app.model.Const
 import com.example.weather_api.core_data.mappers.toLastDB
 import com.example.weather_api.core_data.mappers.toLocationDB

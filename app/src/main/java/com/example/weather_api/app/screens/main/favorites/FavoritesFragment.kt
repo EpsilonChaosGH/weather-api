@@ -3,7 +3,6 @@ package com.example.weather_api.app.screens.main.favorites
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -47,6 +46,7 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
     private fun observeFavoriteState() {
         viewModel.favoritesState.observe(viewLifecycleOwner) {
             adapter.favoritesList = it
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

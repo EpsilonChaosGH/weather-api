@@ -45,12 +45,12 @@ class WeatherViewModel @Inject constructor(
             _showVeilEvent.publishEvent()
             weatherRepository.listenCurrentWeatherState().collect { weather ->
                 _weatherState.value = weather.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm)
-                _hideVeilEvent.publishEvent()
             }
         }
         viewModelScope.launch {
             weatherRepository.listenCurrentForecastState().collect { forecast ->
                 _forecastState.value = forecast.map { it.toWeatherState(FORMAT_EEE_HH_mm) }
+                _hideVeilEvent.publishEvent()
             }
         }
         viewModelScope.launch {

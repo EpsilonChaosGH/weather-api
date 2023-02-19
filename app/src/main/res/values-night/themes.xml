@@ -14,7 +14,6 @@
         <!-- Customize your theme here. -->
 
         <item name="textInputStyle">@style/GlobalTextInputStyle</item>
-        <item name="buttonStyle">@style/GlobalButtonStyle</item>
         <item name="android:textViewStyle">@style/GlobalTextViewStyle</item>
     </style>
 
@@ -28,34 +27,24 @@
         <item name="android:minWidth">@dimen/big_width</item>
     </style>
 
-    <style name="GlobalButtonStyle" parent="Widget.MaterialComponents.Button">
-        <item name="android:minWidth">@dimen/big_width</item>
-    </style>
-
-    <style name="GlobalButtonStyle.Secondary">
-        <item name="android:backgroundTint">@color/black</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
 
     <style name="GlobalTextViewStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="WeatherIconImageView">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">34dp</item>
     </style>
 
     <style name="TitleTextView">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">32sp</item>
+        <item name="android:textSize">28sp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="WeatherDetailsTextView">
-        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
         <item name="android:lines">1</item>
@@ -63,16 +52,20 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="WeatherHintTextView">
+    <style name="HintTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:layout_marginTop">6dp</item>
-        <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="WeatherValueTextView">
-        <item name="android:layout_marginTop">6dp</item>
+    <style name="HintTextView.Weather">
+        <item name="android:layout_marginTop">@dimen/low_space</item>
+    </style>
+
+    <style name="HintTextView.Air">
+    </style>
+
+    <style name="ValueTextView">
         <item name="android:textColor">@color/main_text_color</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -81,4 +74,32 @@
         <item name="android:ellipsize">end</item>
         <item name="android:lines">1</item>
     </style>
+
+    <style name="ValueTextView.Weather">
+        <item name="android:layout_marginTop">@dimen/low_space</item>
+    </style>
+
+    <style name="ValueTextView.Air">
+        <item name="android:layout_marginStart">@dimen/low_space</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">@string/test_air_concentration</item>
+    </style>
+
+    <style name="ValueTextView.AirQuality">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">@string/test_air_quality</item>
+    </style>
+
+    <style name="Layout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/layout_bg_weather</item>
+        <item name="android:padding">@dimen/medium_space</item>
+        <item name="android:layout_marginTop">@dimen/low_space</item>
+        <item name="android:layout_marginStart">@dimen/low_space</item>
+        <item name="android:layout_marginBottom">@dimen/low_space</item>
+        <item name="android:layout_marginEnd">@dimen/low_space</item>
+    </style>
+
 </resources>
