@@ -3,8 +3,7 @@ package com.example.weather_api.app.di
 import android.content.Context
 import androidx.room.Room
 import com.example.weather_api.core_db.room.AppDatabase
-import com.example.weather_api.core_db.room.dao.LastLocationDao
-import com.example.weather_api.core_db.room.dao.LocationDao
+import com.example.weather_api.core_db.room.dao.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,13 +22,30 @@ class RoomModule {
             context,
             AppDatabase::class.java,
             "WeatherApp-DB"
-        ).build()
+        ).createFromAsset("init_db.db")
+            .build()
 
     @Provides
     @Singleton
-    fun provideLocationDao(db: AppDatabase): LocationDao = db.locationDao()
+    fun provideFavoritesDao(db: AppDatabase): FavoritesDao = db.favoritesDao()
 
     @Provides
     @Singleton
-    fun provideLastLocationDao(db: AppDatabase): LastLocationDao = db.lastLocationDao()
+    fun provideAirDao(db: AppDatabase): AirDao = db.airDao()
+
+    @Provides
+    @Singleton
+    fun provideForecastDao(db: AppDatabase): ForecastDao = db.forecastDao()
+
+    @Provides
+    @Singleton
+    fun provideLastWeatherDao(db: AppDatabase): LastWeatherDao = db.lastWeatherDao()
+
+    @Provides
+    @Singleton
+    fun provideLastAirDao(db: AppDatabase): LastAirDao = db.lastAirDao()
+
+    @Provides
+    @Singleton
+    fun provideLastForecastDao(db: AppDatabase): LastForecastDao = db.lastForecastDao()
 }

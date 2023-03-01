@@ -9,7 +9,7 @@ import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.share
 import com.example.weather_api.core_data.WeatherRepository
 import com.example.weather_api.core_data.mappers.toWeatherState
-import com.example.weather_api.core_data.models.Location
+import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_data.models.WeatherEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
@@ -37,26 +37,31 @@ class FavoritesViewModel @Inject constructor(
                 val favoritesDef = mutableListOf<Deferred<WeatherEntity>>()
                 list.map {
                     val response = async {
-                        return@async weatherRepository.getFavoriteWeatherByCoordinates(it.coordinates)
+                        return@async weatherRepository.getFavoriteWeatherByCoordinates(
+                            Coordinates(
+                                lon = it.lon,
+                                lat = it.lat
+                            )
+                        )
                     }
                     favoritesDef.add(response)
                 }
                 val favorites = favoritesDef.map { it.await() }.toMutableList()
-                favorites.sortBy { it.cityName }
+                favorites.sortBy { it.city }
                 _favoritesState.value = favorites.map { it.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm) }
             }
         }
     }
 
-    fun deleteFromFavorites(citiName: String) {
+    fun deleteFromFavorites(city: String) {
         viewModelScope.safeLaunch {
-            weatherRepository.deleteFromFavoritesByCity(citiName)
+            weatherRepository.deleteFromFavoritesByCity(city)
         }
     }
 
-    fun setCurrentLocation(location: Location) {
+    fun setCurrentWeather(city: String) {
         viewModelScope.launch {
-            weatherRepository.setCurrentLocation(location)
+            weatherRepository.setCurrentWeather(city)
         }
     }
 }

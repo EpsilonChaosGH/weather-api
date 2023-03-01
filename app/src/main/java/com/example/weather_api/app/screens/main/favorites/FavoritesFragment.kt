@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
 import com.example.weather_api.app.screens.base.BaseFragment
-import com.example.weather_api.core_data.models.Location
 import com.example.weather_api.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,12 +20,12 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
 
     private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) {
         FavoriteAdapter(object : FavoritesClickListener {
-            override fun deleteFromFavorites(citiName: String) {
-                viewModel.deleteFromFavorites(citiName)
+            override fun deleteFromFavorites(city: String) {
+                viewModel.deleteFromFavorites(city)
             }
 
-            override fun showDetailsWeather(location: Location) {
-                viewModel.setCurrentLocation(location)
+            override fun showDetailsWeather(city: String) {
+                viewModel.setCurrentWeather(city)
                 findNavController().navigate(R.id.action_favoritesFragment_to_weather_graph)
             }
         })

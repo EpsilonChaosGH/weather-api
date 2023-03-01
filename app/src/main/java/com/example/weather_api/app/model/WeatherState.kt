@@ -1,9 +1,8 @@
 package com.example.weather_api.app.model
 
-import com.example.weather_api.core_data.models.Location
 
 data class WeatherState(
-    val cityName: String,
+    val city: String,
     val country: String,
     val temperature: String,
     val weatherType: WeatherType,
@@ -13,7 +12,7 @@ data class WeatherState(
     val pressure: String,
     val windSpeed: String,
     val data: String,
-    val location: Location,
+    var isFavorite: Boolean,
     val emptyCityError: Boolean = false,
     val weatherInProgress: Boolean = false
 ) {

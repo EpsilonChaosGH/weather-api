@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -153,7 +154,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 cityTextInput.isEnabled = weatherState.enableViews
                 searchByCoordinatesImageView.isEnabled = weatherState.enableViews
 
-                cityNameTextView.text = weatherState.cityName
+                cityNameTextView.text = weatherState.city
                 temperatureTextView.text = weatherState.temperature
                 currentWeatherTextView.text = weatherState.description
                 currentDateTextView.text = weatherState.data
@@ -162,8 +163,13 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 pressureTextView.text = weatherState.pressure
                 windSpeedTextView.text = weatherState.windSpeed
                 weatherIconImageView.setImageResource(weatherState.weatherType.iconResId)
+                Toast.makeText(
+                    requireContext(),
+                    weatherState.isFavorite.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
 
-                if (weatherState.location.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+                if (weatherState.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
                 else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
                 progressBar.visibility =

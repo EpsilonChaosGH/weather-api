@@ -9,6 +9,7 @@ import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.core_data.WeatherRepository
 import com.example.weather_api.core_data.mappers.toAirPollutionState
+import com.example.weather_api.core_data.mappers.toForecastState
 import com.example.weather_api.core_data.mappers.toWeatherState
 import com.example.weather_api.core_data.models.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,7 @@ class WeatherViewModel @Inject constructor(
     private val _weatherState = MutableLiveData<WeatherState>()
     val weatherState = _weatherState.share()
 
-    private val _forecastState = MutableLiveData<List<WeatherState>>()
+    private val _forecastState = MutableLiveData<List<ForecastState>>()
     val forecastState = _forecastState.share()
 
     private val _airState = MutableLiveData<AirPollutionState>()
@@ -49,7 +50,7 @@ class WeatherViewModel @Inject constructor(
         }
         viewModelScope.launch {
             weatherRepository.listenCurrentForecastState().collect { forecast ->
-                _forecastState.value = forecast.map { it.toWeatherState(FORMAT_EEE_HH_mm) }
+                _forecastState.value = forecast.map { it.toForecastState(FORMAT_EEE_HH_mm) }
                 _hideVeilEvent.publishEvent()
             }
         }
@@ -100,7 +101,7 @@ class WeatherViewModel @Inject constructor(
 
     fun addOrRemoveToFavorite() {
         viewModelScope.safeLaunch {
-            if (weatherState.value!!.location.isFavorite) {
+            if (weatherState.value!!.isFavorite) {
                 weatherRepository.deleteFromFavorites()
             } else {
                 weatherRepository.addToFavorites()
