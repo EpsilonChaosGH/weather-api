@@ -14,5 +14,4 @@ data class WeatherEntity(
     val data: Long,
     val lon: String,
     val lat: String,
-    var isFavorite: Boolean,
 )

@@ -4,7 +4,6 @@ import com.example.weather_api.app.model.Const
 import com.example.weather_api.core_data.mappers.toAirPollutionEntity
 import com.example.weather_api.core_data.mappers.toForecastList
 import com.example.weather_api.core_data.mappers.toWeather
-import com.example.weather_api.core_data.models.City
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_network.base.BaseRetrofitSource
 import com.example.weather_api.core_network.base.RetrofitConfig
@@ -18,9 +17,9 @@ class RetrofitWeatherSource @Inject constructor(
 
     private val weatherApi = retrofit.create(WeatherApi::class.java)
 
-    override suspend fun getWeatherByCity(city: City) = wrapRetrofitExceptions {
+    override suspend fun getWeatherByCity(city: String) = wrapRetrofitExceptions {
         return@wrapRetrofitExceptions weatherApi.getWeatherByCity(
-            city = city.cityName,
+            city = city,
             appId = Const.APP_ID,
             units = Const.UNITS
         ).toWeather()
@@ -47,9 +46,9 @@ class RetrofitWeatherSource @Inject constructor(
             ).toForecastList()
         }
 
-    override suspend fun getForecastByCity(city: City) = wrapRetrofitExceptions {
+    override suspend fun getForecastByCity(city: String) = wrapRetrofitExceptions {
         return@wrapRetrofitExceptions weatherApi.getForecastByCity(
-            city = city.cityName,
+            city = city,
             appId = Const.APP_ID,
             units = Const.UNITS,
             cnt = Const.CNT

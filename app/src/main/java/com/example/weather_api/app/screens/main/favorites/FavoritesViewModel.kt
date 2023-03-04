@@ -32,25 +32,36 @@ class FavoritesViewModel @Inject constructor(
     }
 
     private fun listenCurrentState() {
+
         viewModelScope.safeLaunch {
             weatherRepository.listenCurrentFavoritesLocations().collect { list ->
-                val favoritesDef = mutableListOf<Deferred<WeatherEntity>>()
-                list.map {
-                    val response = async {
-                        return@async weatherRepository.getFavoriteWeatherByCoordinates(
-                            Coordinates(
-                                lon = it.lon,
-                                lat = it.lat
-                            )
-                        )
+                if (list.isNotEmpty()) {
+                    _favoritesState.value = list.map { weather ->
+                        weather!!.weatherEntity.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm, true)
                     }
-                    favoritesDef.add(response)
                 }
-                val favorites = favoritesDef.map { it.await() }.toMutableList()
-                favorites.sortBy { it.city }
-                _favoritesState.value = favorites.map { it.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm) }
             }
         }
+
+//        viewModelScope.safeLaunch {
+//            weatherRepository.listenCurrentFavoritesLocations().collect { list ->
+//                val favoritesDef = mutableListOf<Deferred<WeatherEntity>>()
+//                list.map {
+//                    val response = async {
+//                        return@async weatherRepository.getFavoriteWeatherByCoordinates(
+//                            Coordinates(
+//                                lon = it.weatherEntity.lon,
+//                                lat = it.weatherEntity.lat
+//                            )
+//                        )
+//                    }
+//                    favoritesDef.add(response)
+//                }
+//                val favorites = favoritesDef.map { it.await() }.toMutableList()
+//                favorites.sortBy { it.city }
+//                _favoritesState.value = favorites.map { it.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm, true) }
+//            }
+//        }
     }
 
     fun deleteFromFavorites(city: String) {

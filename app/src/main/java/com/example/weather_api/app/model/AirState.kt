@@ -1,7 +1,7 @@
 package com.example.weather_api.app.model
 
 
-data class AirPollutionState(
+data class AirState(
     var no2: String,
     var no2Quality: AirQuality,
     var o3: String,

@@ -15,7 +15,7 @@ interface WeatherSource {
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getWeatherByCity(city: City): WeatherEntity
+    suspend fun getWeatherByCity(city: String): WeatherEntity
 
     /**
      * Returns weather forecast for 5 days. It includes weather forecast data with 3-hour step.
@@ -25,7 +25,7 @@ interface WeatherSource {
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getForecastByCity(city: City): List<ForecastEntity>
+    suspend fun getForecastByCity(city: String): List<ForecastEntity>
 
     /**
      * Returns current weather data for coordinates.

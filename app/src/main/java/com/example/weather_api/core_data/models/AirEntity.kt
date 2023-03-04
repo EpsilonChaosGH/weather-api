@@ -2,7 +2,6 @@ package com.example.weather_api.core_data.models
 
 
 data class AirEntity(
-    val city: String,
     val no2: Double,
     val o3: Double,
     val pm10: Double,

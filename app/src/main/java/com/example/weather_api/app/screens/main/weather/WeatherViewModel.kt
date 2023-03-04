@@ -28,7 +28,7 @@ class WeatherViewModel @Inject constructor(
     private val _forecastState = MutableLiveData<List<ForecastState>>()
     val forecastState = _forecastState.share()
 
-    private val _airState = MutableLiveData<AirPollutionState>()
+    private val _airState = MutableLiveData<AirState>()
     val airState = _airState.share()
 
     private val _showVeilEvent = MutableUnitLiveEvent()
@@ -43,65 +43,46 @@ class WeatherViewModel @Inject constructor(
 
     private fun listenCurrentState() {
         viewModelScope.launch {
-            _showVeilEvent.publishEvent()
+//            _showVeilEvent.publishEvent()
             weatherRepository.listenCurrentWeatherState().collect { weather ->
-                _weatherState.value = weather.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm)
-            }
-        }
-        viewModelScope.launch {
-            weatherRepository.listenCurrentForecastState().collect { forecast ->
-                _forecastState.value = forecast.map { it.toForecastState(FORMAT_EEE_HH_mm) }
-                _hideVeilEvent.publishEvent()
-            }
-        }
-        viewModelScope.launch {
-            weatherRepository.listenCurrentAirPollutionState().collect { airPollution ->
-                _airState.value = airPollution.toAirPollutionState()
+                if (weather != null) {
+                    _weatherState.value = weather.weatherEntity.toWeatherState(
+                        FORMAT_EEE_d_MMMM_HH_mm,
+                        weather.isFavorites
+                    )
+                    _forecastState.value =
+                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm) }
+                    _airState.value = weather.airEntity.toAirPollutionState()
+                }
             }
         }
     }
 
-    fun getWeatherAndForecastAndAirByCity(city: City) {
+    fun getWeatherAndForecastAndAirByCity(city: String) {
         viewModelScope.launch {
             showProgress()
             val weatherJob = safeLaunch {
                 weatherRepository.getWeatherByCity(city)
             }
-            val forecastJob = safeLaunch {
-                weatherRepository.getForecastByCity(city)
-            }
-            val airJob = safeLaunch {
-                weatherRepository.getAirPollutionByCity(city)
-            }
             weatherJob.join()
-            forecastJob.join()
-            airJob.join()
             hideProgress()
         }
     }
 
     fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) {
-        showProgress()
+        // showProgress()
         viewModelScope.launch {
             val weatherJob = safeLaunch {
                 weatherRepository.getWeatherByCoordinates(coordinates)
             }
-            val forecastJob = safeLaunch {
-                weatherRepository.getForecastByCoordinates(coordinates)
-            }
-            val airJob = safeLaunch {
-                weatherRepository.getAirPollutionByCoordinate(coordinates)
-            }
-            airJob.join()
             weatherJob.join()
-            forecastJob.join()
-            hideProgress()
+            //  hideProgress()
         }
     }
 
-    fun addOrRemoveToFavorite() {
+    fun addOrRemoveFromFavorite() {
         viewModelScope.safeLaunch {
-            if (weatherState.value!!.isFavorite) {
+            if (weatherState.value!!.isFavorites) {
                 weatherRepository.deleteFromFavorites()
             } else {
                 weatherRepository.addToFavorites()

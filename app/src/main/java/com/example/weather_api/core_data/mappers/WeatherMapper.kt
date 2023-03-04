@@ -1,38 +1,30 @@
 package com.example.weather_api.core_data.mappers
 
-import com.example.weather_api.app.model.Const
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.model.WeatherType
 import com.example.weather_api.app.utils.format
+import com.example.weather_api.core_data.models.MainWeatherEntity
 import com.example.weather_api.core_data.models.WeatherEntity
-import com.example.weather_api.core_db.room.entitity.FavoritesDbEntity
-import com.example.weather_api.core_db.room.entitity.LastWeatherDbEntity
+import com.example.weather_api.core_db.room.entitity.WeatherDbEntity
+import com.example.weather_api.core_db.room.entitity.WeatherWithForecast
 import com.example.weather_api.core_network.weather.entities.GetWeatherForecastResponseEntity
 import com.example.weather_api.core_network.weather.entities.GetWeatherResponseEntity
 import kotlin.math.roundToInt
 
-fun LastWeatherDbEntity.toWeather(): WeatherEntity = WeatherEntity(
-    city = city,
-    country = country,
-    temperature = temperature,
-    icon = "ic_${icon}",
-    description = description,
-    feelsLike = feelsLike,
-    humidity = humidity,
-    pressure = pressure,
-    windSpeed = windSpeed,
-    data = data,
-    lon = lon,
-    lat = lat,
-    isFavorite = isFavorite,
+fun WeatherWithForecast.toMainWeatherEntity(): MainWeatherEntity = MainWeatherEntity(
+    city = weather.weatherCity,
+    isCurrent = weather.isCurrent,
+    isFavorites = weather.isFavorites,
+    weatherEntity = weather.weather.toWeatherEntity(),
+    airEntity = weather.air.toAirEntity(),
+    forecastEntityList = forecastList.map { it.toForecastEntity() }
 )
 
-fun WeatherEntity.toLastWeatherDbEntity(): LastWeatherDbEntity = LastWeatherDbEntity(
-    lastWeatherKey = Const.LAST_WEATHER_KEY,
+fun WeatherEntity.toWeatherDb(): WeatherDbEntity = WeatherDbEntity(
     city = city,
     country = country,
     temperature = temperature,
-    icon = "ic_${icon}",
+    icon = icon,
     description = description,
     feelsLike = feelsLike,
     humidity = humidity,
@@ -40,15 +32,14 @@ fun WeatherEntity.toLastWeatherDbEntity(): LastWeatherDbEntity = LastWeatherDbEn
     windSpeed = windSpeed,
     data = data,
     lon = lon,
-    lat = lat,
-    isFavorite = isFavorite,
+    lat = lat
 )
 
-fun FavoritesDbEntity.toWeather(): WeatherEntity = WeatherEntity(
+fun WeatherDbEntity.toWeatherEntity(): WeatherEntity = WeatherEntity(
     city = city,
     country = country,
     temperature = temperature,
-    icon = "ic_${icon}",
+    icon = icon,
     description = description,
     feelsLike = feelsLike,
     humidity = humidity,
@@ -56,24 +47,7 @@ fun FavoritesDbEntity.toWeather(): WeatherEntity = WeatherEntity(
     windSpeed = windSpeed,
     data = data,
     lon = lon,
-    lat = lat,
-    isFavorite = isFavorite,
-)
-
-fun WeatherEntity.toFavoritesDbEntity(): FavoritesDbEntity = FavoritesDbEntity(
-    city = city,
-    country = country,
-    temperature = temperature,
-    icon = "ic_${icon}",
-    description = description,
-    feelsLike = feelsLike,
-    humidity = humidity,
-    pressure = pressure,
-    windSpeed = windSpeed,
-    data = data,
-    lon = lon,
-    lat = lat,
-    isFavorite = isFavorite,
+    lat = lat
 )
 
 fun GetWeatherResponseEntity.toWeather(): WeatherEntity = WeatherEntity(
@@ -89,7 +63,6 @@ fun GetWeatherResponseEntity.toWeather(): WeatherEntity = WeatherEntity(
     data = dt + timezone * 1000,
     lon = coord.lon.toString(),
     lat = coord.lat.toString(),
-    isFavorite = false,
 )
 
 fun GetWeatherForecastResponseEntity.toWeatherList(): List<WeatherEntity> {
@@ -110,14 +83,13 @@ fun GetWeatherForecastResponseEntity.toWeatherList(): List<WeatherEntity> {
                 data = it.dt + city.timezone * 1000,
                 lon = city.coord.lon.toString(),
                 lat = city.coord.lat.toString(),
-                isFavorite = false,
             )
         )
     }
     return weatherEntityList
 }
 
-fun WeatherEntity.toWeatherState(dataFormat: String) = WeatherState(
+fun WeatherEntity.toWeatherState(dataFormat: String, isFavorites: Boolean) = WeatherState(
     city = city,
     country = country,
     temperature = "${temperature.roundToInt()}°C",
@@ -128,5 +100,5 @@ fun WeatherEntity.toWeatherState(dataFormat: String) = WeatherState(
     pressure = "$pressure hPa",
     windSpeed = "${windSpeed.roundToInt()} m/s",
     data = data.format(dataFormat),
-    isFavorite = isFavorite,
+    isFavorites = isFavorites
 )
