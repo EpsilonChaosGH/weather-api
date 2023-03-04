@@ -1,11 +1,9 @@
 package com.example.weather_api.core_data
 
-import com.example.weather_api.app.model.Const
-import com.example.weather_api.core_data.mappers.toLastDB
-import com.example.weather_api.core_data.mappers.toLocationDB
-import com.example.weather_api.core_data.mappers.toLocation
+import com.example.weather_api.core_data.mappers.*
 import com.example.weather_api.core_data.models.*
 import com.example.weather_api.core_db.room.AppDatabase
+import com.example.weather_api.core_db.room.entitity.*
 import com.example.weather_api.core_network.weather.WeatherSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -16,87 +14,54 @@ import javax.inject.Singleton
 @Singleton
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherSource: WeatherSource,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
 ) : WeatherRepository {
 
-    private val currentWeatherState = MutableSharedFlow<WeatherEntity>(1)
-    private val currentForecastState = MutableSharedFlow<List<WeatherEntity>>(1)
-    private val currentAirPollutionState = MutableSharedFlow<AirPollutionEntity>(1)
-
-    override suspend fun listenCurrentWeatherState(): Flow<WeatherEntity> {
-        getWeatherByCoordinates(getCurrentLocation().coordinates)
-        return currentWeatherState
+    override suspend fun listenCurrentWeatherState(): Flow<MainWeatherEntity?> {
+        return appDatabase.weatherDao().getCurrentWeatherFlow(true)
+            .map { it?.toMainWeatherEntity() }
     }
 
-    override suspend fun listenCurrentForecastState(): Flow<List<WeatherEntity>> {
-        getForecastByCoordinates(getCurrentLocation().coordinates)
-        return currentForecastState
-    }
-
-    override suspend fun listenCurrentAirPollutionState(): Flow<AirPollutionEntity> {
-        getAirPollutionByCoordinate(getCurrentLocation().coordinates)
-        return currentAirPollutionState
-    }
-
-    override suspend fun listenCurrentFavoritesLocations(): Flow<List<Location>> {
-        return appDatabase.locationDao().getAllLocationsFlow().map { list ->
-            list.map {
-                it?.toLocation() ?: throw EmptyFavoritesException()
+    override suspend fun listenCurrentFavoritesLocations(): Flow<List<MainWeatherEntity?>> {
+        return appDatabase.weatherDao().getFavoritesFlow(isFavorites = true)
+            .map { list ->
+                list.map {
+                    it?.toMainWeatherEntity()
+                }
             }
-        }
     }
 
-    override suspend fun getWeatherByCity(city: City) = wrapBackendExceptions {
-        val response = checkForFavorites(weatherSource.getWeatherByCity(city))
-        currentWeatherState.emit(response)
-        setCurrentLocation(response.location)
-    }
+    override suspend fun getWeatherByCity(city: String) = wrapBackendExceptions {
+        val weather = weatherSource.getWeatherByCity(city)
+        val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
+        val air = weatherSource.getAirPollutionByCoordinates(coordinates)
+        val forecast = weatherSource.getForecastByCity(city)
 
-    override suspend fun getForecastByCity(city: City) = wrapBackendExceptions {
-        currentForecastState.emit(weatherSource.getWeatherForecastByCity(city))
-    }
-
-    override suspend fun getAirPollutionByCity(city: City) = wrapBackendExceptions {
-        val coordinates = weatherSource.getWeatherByCity(city).location.coordinates
-        getAirPollutionByCoordinate(coordinates)
+        setCurrentWeather(weather = weather, air = air, forecast = forecast)
     }
 
     override suspend fun getWeatherByCoordinates(coordinates: Coordinates) = wrapBackendExceptions {
-        val response = checkForFavorites(weatherSource.getWeatherByCoordinates(coordinates))
-        currentWeatherState.emit(response)
-        setCurrentLocation(response.location)
+        val weather = weatherSource.getWeatherByCoordinates(coordinates)
+        val air = weatherSource.getAirPollutionByCoordinates(coordinates)
+        val forecast = weatherSource.getForecastByCoordinates(coordinates)
+
+        setCurrentWeather(weather = weather, air = air, forecast = forecast)
     }
 
-    override suspend fun getForecastByCoordinates(coordinates: Coordinates) =
-        wrapBackendExceptions {
-            currentForecastState.emit(weatherSource.getWeatherForecastByCoordinates(coordinates))
-        }
-
-    override suspend fun getAirPollutionByCoordinate(coordinates: Coordinates) =
-        wrapBackendExceptions {
-            currentAirPollutionState.emit(weatherSource.getAirPollutionByCoordinates(coordinates))
-        }
-
     override suspend fun addToFavorites() = wrapSQLiteException(Dispatchers.IO) {
-        val state = currentWeatherState.replayCache[0]
-        state.location.isFavorite = true
-        currentWeatherState.emit(state)
-        appDatabase.locationDao().insertLocation(state.location.toLocationDB())
+        appDatabase.weatherDao().updateFavorites(
+            UpdateFavoritesTuple(
+                appDatabase.weatherDao().getCurrentCity(isCurrent = true),
+                isFavorites = true
+            )
+        )
     }
 
     override suspend fun deleteFromFavorites() = wrapSQLiteException(Dispatchers.IO) {
-        val state = currentWeatherState.replayCache[0]
-        state.location.isFavorite = false
-        currentWeatherState.emit(state)
-        appDatabase.locationDao().deleteLocation(state.location.city)
     }
 
-    override suspend fun deleteFromFavoritesByCity(citiName: String) =
+    override suspend fun deleteFromFavoritesByCity(city: String) =
         wrapSQLiteException(Dispatchers.IO) {
-            val state = currentWeatherState.replayCache[0]
-            state.location.isFavorite = false
-            currentWeatherState.emit(state)
-            appDatabase.locationDao().deleteLocation(citiName)
         }
 
     override suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
@@ -106,22 +71,35 @@ class WeatherRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun setCurrentLocation(location: Location) {
-        appDatabase.lastLocationDao().insertLastLocation(location.toLastDB())
+    override suspend fun setCurrentWeather(city: String) = wrapSQLiteException(Dispatchers.IO) {
+        appDatabase.weatherDao().updateAllCurrent(current = true, new_current = false)
+        appDatabase.weatherDao().updateCurrent(UpdateCurrentTuple(city = city, isCurrent = true))
     }
 
-    private suspend fun checkForFavorites(response: WeatherEntity): WeatherEntity =
+    private suspend fun checkForFavorites(city: String): Boolean =
         wrapSQLiteException(Dispatchers.IO) {
-            appDatabase.locationDao().getAllLocations().forEach { locationDb ->
-                if (locationDb?.city == response.cityName) {
-                    response.location.isFavorite = true
-                }
-            }
-            return@wrapSQLiteException response
+            return@wrapSQLiteException appDatabase.weatherDao().checkForFavorites(city)
         }
 
-    private suspend fun getCurrentLocation(): Location {
-        return appDatabase.lastLocationDao().getLastLocations(Const.LAST_LOCATION_KEY)?.toLocation()
-            ?: Location(Const.DEFAULT_CITY, Coordinates(Const.DEFAULT_LON, Const.DEFAULT_LAT))
+    private suspend fun setCurrentWeather(
+        weather: WeatherEntity,
+        air: AirEntity,
+        forecast: List<ForecastEntity>
+    ) = wrapSQLiteException(Dispatchers.IO) {
+        appDatabase.weatherDao()
+            .insertForecast(forecast.map { it.toForecastDbEntity() })
+
+        appDatabase.weatherDao().insertWeather(
+            MainWeatherDbEntity(
+                weatherCity = weather.city,
+                isCurrent = true,
+                isFavorites = checkForFavorites(weather.city),
+                weather = weather.toWeatherDb(),
+                air = air.toAirDb()
+            )
+        )
+        appDatabase.weatherDao().updateAllCurrent(current = true, new_current = false)
+        appDatabase.weatherDao()
+            .updateCurrent(UpdateCurrentTuple(city = weather.city, isCurrent = true))
     }
 }

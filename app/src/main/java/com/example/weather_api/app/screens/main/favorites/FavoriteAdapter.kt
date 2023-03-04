@@ -7,16 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.R
 import com.example.weather_api.app.model.WeatherState
-import com.example.weather_api.core_data.models.Location
-import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.databinding.ItemFavoriteBinding
-import java.text.SimpleDateFormat
-import java.util.*
-import java.sql.Date
 
 interface FavoritesClickListener {
-    fun deleteFromFavorites(citiName: String)
-    fun showDetailsWeather(location: Location)
+    fun deleteFromFavorites(city: String)
+    fun showDetailsWeather(city: String)
 }
 
 class FavoriteAdapter(
@@ -38,8 +33,8 @@ class FavoriteAdapter(
         val favorite = v.tag as WeatherState
 
         when (v.id) {
-            R.id.favoriteImageView -> listener.deleteFromFavorites(favorite.cityName)
-            R.id.mainWeatherContainer -> listener.showDetailsWeather(favorite.location)
+            R.id.favoriteImageView -> listener.deleteFromFavorites(favorite.city)
+            R.id.mainWeatherContainer -> listener.showDetailsWeather(favorite.city)
         }
     }
 
@@ -57,13 +52,13 @@ class FavoriteAdapter(
         with(holder.binding) {
             favoriteImageView.tag = weather
             mainWeatherContainer.tag = weather
-            cityNameTextView.text = weather.cityName
+            cityNameTextView.text = weather.city
             temperatureTextView.text = weather.temperature
             currentDateTextView.text = weather.data
             currentWeatherTextView.text = weather.description
             weatherIconImageView.setImageResource(weather.weatherType.iconResId)
 
-            if (weather.location.isFavorite) {
+            if (weather.isFavorites) {
                 favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
             } else {
                 favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)

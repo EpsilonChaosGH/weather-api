@@ -2,18 +2,56 @@ package com.example.weather_api.core_data.mappers
 
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.model.WeatherType
-import com.example.weather_api.app.utils.FORMAT_EEE_d_MMMM_HH_mm
 import com.example.weather_api.app.utils.format
-import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.core_data.models.Location
+import com.example.weather_api.core_data.models.MainWeatherEntity
 import com.example.weather_api.core_data.models.WeatherEntity
+import com.example.weather_api.core_db.room.entitity.WeatherDbEntity
+import com.example.weather_api.core_db.room.entitity.WeatherWithForecast
 import com.example.weather_api.core_network.weather.entities.GetWeatherForecastResponseEntity
 import com.example.weather_api.core_network.weather.entities.GetWeatherResponseEntity
-import java.sql.Date
 import kotlin.math.roundToInt
 
+fun WeatherWithForecast.toMainWeatherEntity(): MainWeatherEntity = MainWeatherEntity(
+    city = weather.weatherCity,
+    isCurrent = weather.isCurrent,
+    isFavorites = weather.isFavorites,
+    weatherEntity = weather.weather.toWeatherEntity(),
+    airEntity = weather.air.toAirEntity(),
+    forecastEntityList = forecastList.map { it.toForecastEntity() }
+)
+
+fun WeatherEntity.toWeatherDb(): WeatherDbEntity = WeatherDbEntity(
+    city = city,
+    country = country,
+    temperature = temperature,
+    icon = icon,
+    description = description,
+    feelsLike = feelsLike,
+    humidity = humidity,
+    pressure = pressure,
+    windSpeed = windSpeed,
+    data = data,
+    lon = lon,
+    lat = lat
+)
+
+fun WeatherDbEntity.toWeatherEntity(): WeatherEntity = WeatherEntity(
+    city = city,
+    country = country,
+    temperature = temperature,
+    icon = icon,
+    description = description,
+    feelsLike = feelsLike,
+    humidity = humidity,
+    pressure = pressure,
+    windSpeed = windSpeed,
+    data = data,
+    lon = lon,
+    lat = lat
+)
+
 fun GetWeatherResponseEntity.toWeather(): WeatherEntity = WeatherEntity(
-    cityName = name,
+    city = name,
     country = sys.country,
     temperature = main.temp,
     icon = "ic_${weather.firstOrNull()?.icon}",
@@ -22,14 +60,9 @@ fun GetWeatherResponseEntity.toWeather(): WeatherEntity = WeatherEntity(
     humidity = main.humidity,
     pressure = main.pressure,
     windSpeed = wind.speed,
-    data = Date((dt + timezone) * 1000),
-    location = Location(
-        city = name,
-        Coordinates(
-            lon = coord.lon.toString(),
-            lat = coord.lat.toString()
-        )
-    )
+    data = dt + timezone * 1000,
+    lon = coord.lon.toString(),
+    lat = coord.lat.toString(),
 )
 
 fun GetWeatherForecastResponseEntity.toWeatherList(): List<WeatherEntity> {
@@ -38,7 +71,7 @@ fun GetWeatherForecastResponseEntity.toWeatherList(): List<WeatherEntity> {
     list.map {
         weatherEntityList.add(
             WeatherEntity(
-                cityName = city.name,
+                city = city.name,
                 country = city.country,
                 temperature = it.main.temp,
                 icon = "ic_${it.weather.firstOrNull()?.icon}",
@@ -47,22 +80,17 @@ fun GetWeatherForecastResponseEntity.toWeatherList(): List<WeatherEntity> {
                 humidity = it.main.humidity,
                 pressure = it.main.pressure,
                 windSpeed = it.wind.speed,
-                data = Date((it.dt + city.timezone) * 1000),
-                location = Location(
-                    city = city.name,
-                    Coordinates(
-                        lon = city.coord.lon.toString(),
-                        lat = city.coord.lat.toString()
-                    )
-                )
+                data = it.dt + city.timezone * 1000,
+                lon = city.coord.lon.toString(),
+                lat = city.coord.lat.toString(),
             )
         )
     }
     return weatherEntityList
 }
 
-fun WeatherEntity.toWeatherState(dataFormat: String) = WeatherState(
-    cityName = cityName,
+fun WeatherEntity.toWeatherState(dataFormat: String, isFavorites: Boolean) = WeatherState(
+    city = city,
     country = country,
     temperature = "${temperature.roundToInt()}°C",
     weatherType = WeatherType.find(icon),
@@ -71,6 +99,6 @@ fun WeatherEntity.toWeatherState(dataFormat: String) = WeatherState(
     humidity = "$humidity %",
     pressure = "$pressure hPa",
     windSpeed = "${windSpeed.roundToInt()} m/s",
-    data = data.time.format(dataFormat),
-    location = location
+    data = data.format(dataFormat),
+    isFavorites = isFavorites
 )

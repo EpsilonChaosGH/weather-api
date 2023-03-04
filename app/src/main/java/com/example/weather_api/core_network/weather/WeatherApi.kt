@@ -23,7 +23,7 @@ interface WeatherApi {
     ): GetWeatherResponseEntity
 
     @GET("forecast?")
-    suspend fun getWeatherForecastByCoordinate(
+    suspend fun getForecastByCoordinate(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
         @Query("appid") appId: String,
@@ -32,7 +32,7 @@ interface WeatherApi {
     ): GetWeatherForecastResponseEntity
 
     @GET("forecast?")
-    suspend fun getWeatherForecastByCity(
+    suspend fun getForecastByCity(
         @Query("q") city: String,
         @Query("appid") appId: String,
         @Query("units") units: String,

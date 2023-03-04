@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
 import com.example.weather_api.app.model.Field
-import com.example.weather_api.core_data.models.City
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
 import com.example.weather_api.app.utils.observeEvent
@@ -105,11 +104,11 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     }
 
     private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherAndForecastAndAirByCity(City(city))
+        viewModel.getWeatherAndForecastAndAirByCity(city)
     }
 
     private fun addOrRemoveToFavorite() {
-        viewModel.addOrRemoveToFavorite()
+        viewModel.addOrRemoveFromFavorite()
     }
 
     private fun getWeatherByCoordinates() {
@@ -153,7 +152,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 cityTextInput.isEnabled = weatherState.enableViews
                 searchByCoordinatesImageView.isEnabled = weatherState.enableViews
 
-                cityNameTextView.text = weatherState.cityName
+                cityNameTextView.text = weatherState.city
                 temperatureTextView.text = weatherState.temperature
                 currentWeatherTextView.text = weatherState.description
                 currentDateTextView.text = weatherState.data
@@ -163,7 +162,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                 windSpeedTextView.text = weatherState.windSpeed
                 weatherIconImageView.setImageResource(weatherState.weatherType.iconResId)
 
-                if (weatherState.location.isFavorite) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+                if (weatherState.isFavorites) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
                 else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
                 progressBar.visibility =

@@ -4,14 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weather_api.R
-import com.example.weather_api.app.model.WeatherState
-import com.example.weather_api.app.utils.FORMAT_EEE_HH_mm
-import com.example.weather_api.app.utils.toTime
+import com.example.weather_api.app.model.ForecastState
 import com.example.weather_api.databinding.ItemWeatherForecastBinding
-import java.text.SimpleDateFormat
-import java.util.*
-import java.sql.Date
 
 
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
@@ -19,7 +13,7 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
         val binding: ItemWeatherForecastBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    var weatherList = listOf<WeatherState>()
+    var weatherList = listOf<ForecastState>()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value

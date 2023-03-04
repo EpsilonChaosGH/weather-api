@@ -1,19 +1,34 @@
 package com.example.weather_api.core_data.mappers
 
-import com.example.weather_api.app.model.AirPollutionState
+import com.example.weather_api.app.model.AirState
 import com.example.weather_api.app.model.AirQuality
-import com.example.weather_api.core_data.models.AirPollutionEntity
+import com.example.weather_api.core_data.models.AirEntity
+import com.example.weather_api.core_db.room.entitity.AirDbEntity
 import com.example.weather_api.core_network.weather.entities.GetAirPollutionRepositoryEntity
 import kotlin.math.roundToInt
 
-fun GetAirPollutionRepositoryEntity.toAirPollutionEntity() = AirPollutionEntity(
+fun AirEntity.toAirDb(): AirDbEntity = AirDbEntity(
+    no2 = no2,
+    o3 = o3,
+    pm10 = pm10,
+    pm25 = pm25,
+)
+
+fun AirDbEntity.toAirEntity(): AirEntity = AirEntity(
+    no2 = no2,
+    o3 = o3,
+    pm10 = pm10,
+    pm25 = pm25,
+)
+
+fun GetAirPollutionRepositoryEntity.toAirPollutionEntity() = AirEntity(
     no2 = list.firstOrNull()?.components?.get("no2") ?: -1.0,
     o3 = list.firstOrNull()?.components?.get("o3") ?: -1.0,
     pm10 = list.firstOrNull()?.components?.get("pm10") ?: -1.0,
     pm25 = list.firstOrNull()?.components?.get("pm2_5") ?: -1.0
 )
 
-fun AirPollutionEntity.toAirPollutionState() = AirPollutionState(
+fun AirEntity.toAirPollutionState() = AirState(
     no2 = "${no2.roundToInt()} μg/m3",
     no2Quality = checkNo2(no2),
     o3 = "${o3.roundToInt()} μg/m3",

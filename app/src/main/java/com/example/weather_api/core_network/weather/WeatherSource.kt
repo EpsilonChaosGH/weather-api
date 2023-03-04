@@ -3,10 +3,7 @@ package com.example.weather_api.core_network.weather
 import com.example.weather_api.core_data.ConnectionException
 import com.example.weather_api.core_data.BackendException
 import com.example.weather_api.core_data.ParseBackendResponseException
-import com.example.weather_api.core_data.models.AirPollutionEntity
-import com.example.weather_api.core_data.models.City
-import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.core_data.models.WeatherEntity
+import com.example.weather_api.core_data.models.*
 
 interface WeatherSource {
 
@@ -18,7 +15,7 @@ interface WeatherSource {
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getWeatherByCity(city: City): WeatherEntity
+    suspend fun getWeatherByCity(city: String): WeatherEntity
 
     /**
      * Returns weather forecast for 5 days. It includes weather forecast data with 3-hour step.
@@ -28,7 +25,7 @@ interface WeatherSource {
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getWeatherForecastByCity(city: City): List<WeatherEntity>
+    suspend fun getForecastByCity(city: String): List<ForecastEntity>
 
     /**
      * Returns current weather data for coordinates.
@@ -48,15 +45,15 @@ interface WeatherSource {
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getWeatherForecastByCoordinates(coordinates: Coordinates): List<WeatherEntity>
+    suspend fun getForecastByCoordinates(coordinates: Coordinates): List<ForecastEntity>
 
     /**
      * Returns current air pollution data for any coordinates on the globe.
      * @param coordinates Coordinates to search for locations near.
-     * @return [AirPollutionEntity]
+     * @return [AirEntity]
      * @throws ConnectionException
      * @throws BackendException
      * @throws ParseBackendResponseException
      */
-    suspend fun getAirPollutionByCoordinates(coordinates: Coordinates): AirPollutionEntity
+    suspend fun getAirPollutionByCoordinates(coordinates: Coordinates): AirEntity
 }

@@ -1,9 +1,8 @@
 package com.example.weather_api.core_data.models
 
-import java.sql.Date
 
 data class WeatherEntity(
-    val cityName: String,
+    val city: String,
     val country: String,
     val temperature: Double,
     val icon: String,
@@ -12,6 +11,7 @@ data class WeatherEntity(
     val humidity: Long,
     val pressure: Long,
     val windSpeed: Double,
-    val data: Date,
-    val location: Location
+    val data: Long,
+    val lon: String,
+    val lat: String,
 )
