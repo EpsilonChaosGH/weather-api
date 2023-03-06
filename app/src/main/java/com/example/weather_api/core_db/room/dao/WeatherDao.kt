@@ -26,12 +26,15 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeather(weather: MainWeatherDbEntity)
 
-    @Query("SELECT EXISTS( SELECT weather_city  FROM weather WHERE weather_city = :city)")
-    fun checkForFavorites(city: String): Boolean
+    @Query("SELECT EXISTS( SELECT weather_city  FROM weather WHERE weather_city = :city AND is_favorites = :isFavorites)")
+    fun checkForFavorites(city: String, isFavorites: Boolean): Boolean
 
     @Query("SELECT * FROM weather WHERE weather.is_favorites =:isFavorites")
     fun getFavoritesFlow(isFavorites: Boolean): Flow<List<WeatherWithForecast?>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertForecast(forecast: List<ForecastDbEntity>)
+
+    @Query("DELETE FROM weather WHERE weather.weather_city = :city")
+    suspend fun deleteMainWeatherByCity(city: String)
 }

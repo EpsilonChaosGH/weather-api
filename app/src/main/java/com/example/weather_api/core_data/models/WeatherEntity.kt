@@ -12,6 +12,7 @@ data class WeatherEntity(
     val pressure: Long,
     val windSpeed: Double,
     val data: Long,
+    val timezone: Long,
     val lon: String,
     val lat: String,
 )

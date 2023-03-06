@@ -9,11 +9,7 @@ import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.share
 import com.example.weather_api.core_data.WeatherRepository
 import com.example.weather_api.core_data.mappers.toWeatherState
-import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.core_data.models.WeatherEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +30,7 @@ class FavoritesViewModel @Inject constructor(
     private fun listenCurrentState() {
 
         viewModelScope.safeLaunch {
-            weatherRepository.listenCurrentFavoritesLocations().collect { list ->
+            weatherRepository.listenFavoriteLocations().collect { list ->
                 if (list.isNotEmpty()) {
                     _favoritesState.value = list.map { weather ->
                         weather!!.weatherEntity.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm, true)
@@ -72,7 +68,7 @@ class FavoritesViewModel @Inject constructor(
 
     fun setCurrentWeather(city: String) {
         viewModelScope.launch {
-            weatherRepository.setCurrentWeather(city)
+            weatherRepository.fromFavoritesMainWeatherToCurrent(city)
         }
     }
 }

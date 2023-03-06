@@ -5,7 +5,7 @@ import com.example.weather_api.app.model.WeatherType
 import com.example.weather_api.app.utils.format
 import com.example.weather_api.core_data.models.ForecastEntity
 import com.example.weather_api.core_db.room.entitity.ForecastDbEntity
-import com.example.weather_api.core_network.weather.entities.GetWeatherForecastResponseEntity
+import com.example.weather_api.core_network.weather.entities.GetForecastResponseEntity
 import kotlin.math.roundToInt
 
 fun ForecastDbEntity.toForecastEntity(): ForecastEntity = ForecastEntity(
@@ -23,7 +23,7 @@ fun ForecastEntity.toForecastDbEntity(): ForecastDbEntity = ForecastDbEntity(
     data = data
 )
 
-fun GetWeatherForecastResponseEntity.toForecastList(): List<ForecastEntity> {
+fun GetForecastResponseEntity.toForecastList(): List<ForecastEntity> {
     val forecastList = mutableListOf<ForecastEntity>()
     list.map {
         forecastList.add(
@@ -40,6 +40,6 @@ fun GetWeatherForecastResponseEntity.toForecastList(): List<ForecastEntity> {
 
 fun ForecastEntity.toForecastState(dataFormat: String) = ForecastState(
     temperature = "${temperature.roundToInt()}°C",
-    data = data.format(dataFormat),
+    data = data.format(dataFormat,123),
     weatherType = WeatherType.find(icon),
 )
