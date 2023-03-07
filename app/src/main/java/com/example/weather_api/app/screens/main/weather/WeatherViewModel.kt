@@ -44,14 +44,14 @@ class WeatherViewModel @Inject constructor(
     private fun listenCurrentState() {
         viewModelScope.launch {
 //            _showVeilEvent.publishEvent()
-            weatherRepository.listenCurrentWeatherState().collect { weather ->
+            weatherRepository.listenMainWeather().collect { weather ->
                 if (weather != null) {
                     _weatherState.value = weather.weatherEntity.toWeatherState(
-                        FORMAT_EEE_d_MMMM_HH_mm,
+                        FORMAT_HH_mm,
                         weather.isFavorites
                     )
                     _forecastState.value =
-                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm) }
+                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm, weather.weatherEntity.timezone) }
                     _airState.value = weather.airEntity.toAirPollutionState()
                 }
             }
@@ -60,12 +60,14 @@ class WeatherViewModel @Inject constructor(
 
     fun getWeatherAndForecastAndAirByCity(city: String) {
         viewModelScope.launch {
-            showProgress()
+            _showVeilEvent.publishEvent()
+//            showProgress()
             val weatherJob = safeLaunch {
-                weatherRepository.getWeatherByCity(city)
+                weatherRepository.getMainWeatherByCity(city)
             }
             weatherJob.join()
-            hideProgress()
+            _hideVeilEvent
+//            hideProgress()
         }
     }
 
@@ -73,7 +75,7 @@ class WeatherViewModel @Inject constructor(
         // showProgress()
         viewModelScope.launch {
             val weatherJob = safeLaunch {
-                weatherRepository.getWeatherByCoordinates(coordinates)
+                weatherRepository.getMainWeatherByCoordinates(coordinates)
             }
             weatherJob.join()
             //  hideProgress()
@@ -83,9 +85,9 @@ class WeatherViewModel @Inject constructor(
     fun addOrRemoveFromFavorite() {
         viewModelScope.safeLaunch {
             if (weatherState.value!!.isFavorites) {
-                weatherRepository.deleteFromFavorites()
+                weatherRepository.deleteFromFavoritesByCity(_weatherState.value?.city ?: "")
             } else {
-                weatherRepository.addToFavorites()
+                weatherRepository.addToFavoritesByCity(_weatherState.value?.city ?: "")
             }
         }
     }

@@ -59,9 +59,9 @@ class FavoriteAdapter(
             weatherIconImageView.setImageResource(weather.weatherType.iconResId)
 
             if (weather.isFavorites) {
-                favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-            } else {
                 favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+            } else {
+                favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
             }
         }
     }

@@ -3,7 +3,7 @@ package com.example.weather_api.core_network.weather
 import com.example.weather_api.app.model.Const
 import com.example.weather_api.core_data.mappers.toAirPollutionEntity
 import com.example.weather_api.core_data.mappers.toForecastList
-import com.example.weather_api.core_data.mappers.toWeather
+import com.example.weather_api.core_data.mappers.toWeatherEntity
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_network.base.BaseRetrofitSource
 import com.example.weather_api.core_network.base.RetrofitConfig
@@ -22,7 +22,7 @@ class RetrofitWeatherSource @Inject constructor(
             city = city,
             appId = Const.APP_ID,
             units = Const.UNITS
-        ).toWeather()
+        ).toWeatherEntity()
     }
 
     override suspend fun getWeatherByCoordinates(coordinates: Coordinates) =
@@ -32,7 +32,7 @@ class RetrofitWeatherSource @Inject constructor(
                 lon = coordinates.lon,
                 appId = Const.APP_ID,
                 units = Const.UNITS
-            ).toWeather()
+            ).toWeatherEntity()
         }
 
     override suspend fun getForecastByCoordinates(coordinates: Coordinates) =

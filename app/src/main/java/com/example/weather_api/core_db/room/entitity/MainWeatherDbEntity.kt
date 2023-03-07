@@ -2,21 +2,7 @@ package com.example.weather_api.core_db.room.entitity
 
 import androidx.room.*
 
-@Entity(
-    tableName = "weather",
-//    indices = [
-//        Index("weather_city", unique = true)
-//    ],
-//    foreignKeys = [
-//        ForeignKey(
-//            entity = ForecastDbEntity::class,
-//            parentColumns = ["city_forecast"],
-//            childColumns = ["weather_city"],
-//            onDelete = ForeignKey.CASCADE,
-//            onUpdate = ForeignKey.CASCADE
-//        )
-//    ]
-)
+@Entity(tableName = "weather")
 data class MainWeatherDbEntity(
     @PrimaryKey @ColumnInfo(name = "weather_city") val weatherCity: String,
     @ColumnInfo(name = "is_current") var isCurrent: Boolean,

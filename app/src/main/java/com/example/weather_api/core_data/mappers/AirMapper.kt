@@ -4,7 +4,7 @@ import com.example.weather_api.app.model.AirState
 import com.example.weather_api.app.model.AirQuality
 import com.example.weather_api.core_data.models.AirEntity
 import com.example.weather_api.core_db.room.entitity.AirDbEntity
-import com.example.weather_api.core_network.weather.entities.GetAirPollutionRepositoryEntity
+import com.example.weather_api.core_network.weather.entities.GetAirRepositoryEntity
 import kotlin.math.roundToInt
 
 fun AirEntity.toAirDb(): AirDbEntity = AirDbEntity(
@@ -21,7 +21,7 @@ fun AirDbEntity.toAirEntity(): AirEntity = AirEntity(
     pm25 = pm25,
 )
 
-fun GetAirPollutionRepositoryEntity.toAirPollutionEntity() = AirEntity(
+fun GetAirRepositoryEntity.toAirPollutionEntity() = AirEntity(
     no2 = list.firstOrNull()?.components?.get("no2") ?: -1.0,
     o3 = list.firstOrNull()?.components?.get("o3") ?: -1.0,
     pm10 = list.firstOrNull()?.components?.get("pm10") ?: -1.0,

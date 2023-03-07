@@ -5,16 +5,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
 
-    suspend fun listenCurrentWeatherState(): Flow<MainWeatherEntity?>
-    suspend fun listenCurrentFavoritesLocations(): Flow<List<MainWeatherEntity?>>
+    suspend fun listenMainWeather(): Flow<MainWeatherEntity?>
+    suspend fun listenFavoriteLocations(): Flow<List<MainWeatherEntity?>>
 
-    suspend fun getWeatherByCity(city: String)
-    suspend fun getWeatherByCoordinates(coordinates: Coordinates)
+    suspend fun getMainWeatherByCity(city: String)
+    suspend fun getMainWeatherByCoordinates(coordinates: Coordinates)
 
-    suspend fun addToFavorites()
-    suspend fun deleteFromFavorites()
+    suspend fun addToFavoritesByCity(city: String)
     suspend fun deleteFromFavoritesByCity(city: String)
     suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity
 
-    suspend fun setCurrentWeather(city: String)
+    suspend fun fromFavoritesMainWeatherToCurrent(city: String)
 }

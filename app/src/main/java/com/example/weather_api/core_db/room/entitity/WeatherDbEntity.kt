@@ -14,6 +14,7 @@ data class WeatherDbEntity(
     @ColumnInfo(name = "pressure") val pressure: Long,
     @ColumnInfo(name = "wind_speed") val windSpeed: Double,
     @ColumnInfo(name = "data") val data: Long,
+    @ColumnInfo(name = "timezone") val timezone: Long,
     @ColumnInfo(name = "longitude") val lon: String,
     @ColumnInfo(name = "latitude") val lat: String,
 )
