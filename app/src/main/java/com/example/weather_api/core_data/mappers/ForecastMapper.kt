@@ -38,8 +38,8 @@ fun GetForecastResponseEntity.toForecastList(): List<ForecastEntity> {
     return forecastList
 }
 
-fun ForecastEntity.toForecastState(dataFormat: String) = ForecastState(
+fun ForecastEntity.toForecastState(dataFormat: String, timeZone: Long) = ForecastState(
     temperature = "${temperature.roundToInt()}°C",
-    data = data.format(dataFormat,123),
+    data = data.format(dataFormat,timeZone),
     weatherType = WeatherType.find(icon),
 )

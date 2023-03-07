@@ -51,7 +51,7 @@ class WeatherViewModel @Inject constructor(
                         weather.isFavorites
                     )
                     _forecastState.value =
-                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm) }
+                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm, weather.weatherEntity.timezone) }
                     _airState.value = weather.airEntity.toAirPollutionState()
                 }
             }
@@ -60,11 +60,13 @@ class WeatherViewModel @Inject constructor(
 
     fun getWeatherAndForecastAndAirByCity(city: String) {
         viewModelScope.launch {
+            _showVeilEvent.publishEvent()
 //            showProgress()
             val weatherJob = safeLaunch {
                 weatherRepository.getMainWeatherByCity(city)
             }
             weatherJob.join()
+            _hideVeilEvent
 //            hideProgress()
         }
     }

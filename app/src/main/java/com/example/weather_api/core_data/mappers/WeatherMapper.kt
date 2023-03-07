@@ -3,7 +3,6 @@ package com.example.weather_api.core_data.mappers
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.model.WeatherType
 import com.example.weather_api.app.utils.diffFormat
-import com.example.weather_api.app.utils.format
 import com.example.weather_api.core_data.models.MainWeatherEntity
 import com.example.weather_api.core_data.models.WeatherEntity
 import com.example.weather_api.core_db.room.entitity.WeatherDbEntity

@@ -15,11 +15,21 @@ fun Long.format(pattern: String, timeZone: Long): String =
 
 fun Long.diffFormat(): String {
     return when (val diffTime = Calendar.getInstance().time.time - this) {
-        in 0..3600000 -> "Last update: " +
+        in 0..60000 -> "Last update: just now"
+
+        in 60000..120000 -> "Last update: " +
+                SimpleDateFormat("m", Locale.getDefault()).format(diffTime) +
+                " minute ago"
+
+        in 120000..3600000 -> "Last update: " +
                 SimpleDateFormat("m", Locale.getDefault()).format(diffTime) +
                 " minutes ago"
 
-        in 0..86400000 -> "Last update: " +
+        in 3600000..7200000 -> "Last update: " +
+                SimpleDateFormat("k", Locale.getDefault()).format(diffTime) +
+                " hour ago"
+
+        in 7200000..86400000 -> "Last update: " +
                 SimpleDateFormat("k", Locale.getDefault()).format(diffTime) +
                 " hours ago"
 
@@ -27,8 +37,8 @@ fun Long.diffFormat(): String {
                 SimpleDateFormat("d", Locale.getDefault()).format(diffTime) +
                 " days ago"
 
-        in 604800000..Long.MAX_VALUE -> "Last update: " +
-                SimpleDateFormat(FORMAT_EEE_HH_mm, Locale.getDefault()).format(diffTime)
+        in 604800000..Long.MAX_VALUE -> "Last update: over a month ago"
+
         else -> ""
     }
 }
