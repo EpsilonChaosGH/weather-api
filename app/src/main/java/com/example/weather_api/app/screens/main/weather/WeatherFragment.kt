@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
@@ -36,15 +37,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
     private val binding by viewBinding(FragmentWeatherBinding::bind)
 
-    private val shimmer by lazy {
-        Shimmer.ColorHighlightBuilder()
-            .setBaseColor(ContextCompat.getColor(requireContext(), R.color.main_secondary_color))
-            .setHighlightColor(ContextCompat.getColor(requireContext(), R.color.main_text_color))
-            .setBaseAlpha(1f)
-            .setHighlightAlpha(1f)
-            .build()
-    }
-
     private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { WeatherAdapter() }
 
     private val fusedLocationClient by lazy {
@@ -59,56 +51,54 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
     @SuppressLint("ResourceAsColor")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         with(binding) {
-            veilLayout.shimmer = shimmer
-
             recyclerView.adapter = adapter
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-            cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    try {
-                        if (cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.City)
-                        getWeatherByCity(cityEditText.text.toString())
-                        return@OnEditorActionListener true
-                    } catch (e: EmptyFieldException) {
-                        viewModel.emptyFieldException(e)
-                    }
-                }
-                false
-            })
-
-            favoriteImageView.setOnClickListener { addOrRemoveToFavorite() }
+            favoriteImageView.setOnClickListener { viewModel.addOrRemoveFromFavorite() }
             searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
         }
 
+        observeEditorActionListener()
+        observeRefresh()
         observeForecastState()
         observeWeatherState()
         observeAirState()
-        showVeil()
-        hideVail()
+        observerProgressState()
     }
 
-    private fun showVeil() {
-        viewModel.showVeilEvent.observeEvent(viewLifecycleOwner) {
-            binding.veilLayout.veil()
+    private fun observerProgressState() {
+        viewModel.progressState.observe(viewLifecycleOwner) { progressState ->
+            binding.progressBar.visibility =
+                if (progressState) View.VISIBLE else View.INVISIBLE
         }
     }
 
-    private fun hideVail() {
-        viewModel.hideVeilEvent.observeEvent(viewLifecycleOwner) {
-            binding.veilLayout.unVeil()
+    private fun observeEditorActionListener() {
+        binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                try {
+                    if (binding.cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.City)
+                    viewModel.getMainWeatherByCity(binding.cityEditText.text.toString())
+                    return@OnEditorActionListener true
+                } catch (e: EmptyFieldException) {
+                    viewModel.emptyFieldException(e)
+                }
+            }
+            false
+        })
+    }
+
+    private fun observeRefresh() {
+        binding.refreshLayout.setColorSchemeResources(R.color.main_text_color)
+        binding.refreshLayout.setProgressBackgroundColorSchemeResource(R.color.main_color)
+        binding.refreshLayout.setOnRefreshListener {
+            lifecycleScope.launchWhenStarted {
+                viewModel.refreshCurrentMainWeather()
+                binding.refreshLayout.isRefreshing = false
+            }
         }
-    }
-
-    private fun getWeatherByCity(city: String) {
-        viewModel.getWeatherAndForecastAndAirByCity(city)
-    }
-
-    private fun addOrRemoveToFavorite() {
-        viewModel.addOrRemoveFromFavorite()
     }
 
     private fun getWeatherByCoordinates() {
@@ -130,7 +120,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
                         lat = location.latitude.toString(),
                         lon = location.longitude.toString()
                     )
-                    viewModel.getWeatherAndForecastAndAirByCoordinate(coordinates)
+                    viewModel.getMainWeatherByCoordinate(coordinates)
                 } else {
                     viewModel.showToast(R.string.error_gps_not_found)
                 }

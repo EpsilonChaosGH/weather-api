@@ -3,6 +3,7 @@ package com.example.weather_api.app.screens.main.favorites
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -33,13 +34,24 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         with(binding) {
             recyclerView.adapter = adapter
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
         observeFavoriteState()
+        observeRefresh()
+    }
+
+    private fun observeRefresh() {
+        binding.refreshLayout.setColorSchemeResources(R.color.main_text_color)
+        binding.refreshLayout.setProgressBackgroundColorSchemeResource(R.color.main_color)
+        binding.refreshLayout.setOnRefreshListener {
+            lifecycleScope.launchWhenStarted {
+                viewModel.refreshFavorites()
+                binding.refreshLayout.isRefreshing = false
+            }
+        }
     }
 
     private fun observeFavoriteState() {

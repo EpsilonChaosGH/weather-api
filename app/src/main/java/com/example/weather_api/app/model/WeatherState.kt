@@ -2,7 +2,7 @@ package com.example.weather_api.app.model
 
 
 data class WeatherState(
-    val city: String,
+    var city: String,
     val country: String,
     val temperature: String,
     val weatherType: WeatherType,
