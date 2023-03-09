@@ -19,8 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     weatherRepository: WeatherRepository,
+    connectivityObserver: ConnectivityObserver,
     logger: Logger
-) : BaseViewModel(weatherRepository, logger) {
+) : BaseViewModel(weatherRepository, connectivityObserver, logger) {
 
     private val _weatherState = MutableLiveData<WeatherState>()
     val weatherState = _weatherState.share()
@@ -31,19 +32,24 @@ class WeatherViewModel @Inject constructor(
     private val _airState = MutableLiveData<AirState>()
     val airState = _airState.share()
 
-    private val _showVeilEvent = MutableUnitLiveEvent()
-    val showVeilEvent = _showVeilEvent.share()
-
-    private val _hideVeilEvent = MutableUnitLiveEvent()
-    val hideVeilEvent = _hideVeilEvent.share()
+    private val _progressState = MutableLiveData<Boolean>()
+    val progressState = _progressState.share()
 
     init {
         listenCurrentState()
+        viewModelScope.safeLaunch {
+            refreshCurrentMainWeather()
+        }
+    }
+
+    suspend fun refreshCurrentMainWeather() {
+        viewModelScope.safeLaunch {
+            weatherRepository.refreshCurrentMainWeather()
+        }.join()
     }
 
     private fun listenCurrentState() {
         viewModelScope.launch {
-//            _showVeilEvent.publishEvent()
             weatherRepository.listenMainWeather().collect { weather ->
                 if (weather != null) {
                     _weatherState.value = weather.weatherEntity.toWeatherState(
@@ -51,34 +57,35 @@ class WeatherViewModel @Inject constructor(
                         weather.isFavorites
                     )
                     _forecastState.value =
-                        weather.forecastEntityList.map { it.toForecastState(FORMAT_EEE_HH_mm, weather.weatherEntity.timezone) }
+                        weather.forecastEntityList.map {
+                            it.toForecastState(
+                                FORMAT_EEE_HH_mm,
+                                weather.weatherEntity.timezone
+                            )
+                        }
                     _airState.value = weather.airEntity.toAirPollutionState()
                 }
             }
         }
     }
 
-    fun getWeatherAndForecastAndAirByCity(city: String) {
+    fun getMainWeatherByCity(city: String) {
         viewModelScope.launch {
-            _showVeilEvent.publishEvent()
-//            showProgress()
-            val weatherJob = safeLaunch {
+            showProgress()
+            safeLaunch {
                 weatherRepository.getMainWeatherByCity(city)
-            }
-            weatherJob.join()
-            _hideVeilEvent
-//            hideProgress()
+            }.join()
+            hideProgress()
         }
     }
 
-    fun getWeatherAndForecastAndAirByCoordinate(coordinates: Coordinates) {
-        // showProgress()
+    fun getMainWeatherByCoordinate(coordinates: Coordinates) {
+        showProgress()
         viewModelScope.launch {
-            val weatherJob = safeLaunch {
+            safeLaunch {
                 weatherRepository.getMainWeatherByCoordinates(coordinates)
-            }
-            weatherJob.join()
-            //  hideProgress()
+            }.join()
+            hideProgress()
         }
     }
 
@@ -99,11 +106,10 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun showProgress() {
-        _weatherState.value =
-            _weatherState.requireValue().copy(emptyCityError = false, weatherInProgress = true)
+        _progressState.value = true
     }
 
     private fun hideProgress() {
-        _weatherState.value = _weatherState.requireValue().copy(weatherInProgress = false)
+        _progressState.value = false
     }
 }

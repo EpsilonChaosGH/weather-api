@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.weather_api"
-        minSdk 23
+        minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -55,6 +55,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
 
     implementation "com.google.android.gms:play-services-location:$playservices_version"
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     //Navigation components
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"

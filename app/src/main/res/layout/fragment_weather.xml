@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.skydoves.androidveil.VeilLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/veilLayout"
+    android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_color"
-    app:veilFrame_veiled="true"
     tools:context=".app.screens.main.weather.WeatherFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/main_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineCenter"
@@ -381,4 +379,4 @@
             app:layout_constraintStart_toStartOf="@+id/weatherIconImageView"
             app:layout_constraintTop_toTopOf="@+id/weatherIconImageView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.skydoves.androidveil.VeilLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

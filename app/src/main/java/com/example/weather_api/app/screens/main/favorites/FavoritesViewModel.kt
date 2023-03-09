@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.screens.base.BaseViewModel
+import com.example.weather_api.app.utils.ConnectivityObserver
 import com.example.weather_api.app.utils.FORMAT_EEE_d_MMMM_HH_mm
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.share
@@ -17,14 +18,21 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     weatherRepository: WeatherRepository,
+    connectivityObserver: ConnectivityObserver,
     logger: Logger
-) : BaseViewModel(weatherRepository, logger) {
+) : BaseViewModel(weatherRepository, connectivityObserver, logger) {
 
     private val _favoritesState = MutableLiveData<List<WeatherState>>()
     val favoritesState = _favoritesState.share()
 
     init {
         listenCurrentState()
+    }
+
+    suspend fun refreshFavorites() {
+        viewModelScope.safeLaunch {
+            weatherRepository.refreshFavorites()
+        }.join()
     }
 
     private fun listenCurrentState() {
@@ -38,26 +46,6 @@ class FavoritesViewModel @Inject constructor(
                 }
             }
         }
-
-//        viewModelScope.safeLaunch {
-//            weatherRepository.listenCurrentFavoritesLocations().collect { list ->
-//                val favoritesDef = mutableListOf<Deferred<WeatherEntity>>()
-//                list.map {
-//                    val response = async {
-//                        return@async weatherRepository.getFavoriteWeatherByCoordinates(
-//                            Coordinates(
-//                                lon = it.weatherEntity.lon,
-//                                lat = it.weatherEntity.lat
-//                            )
-//                        )
-//                    }
-//                    favoritesDef.add(response)
-//                }
-//                val favorites = favoritesDef.map { it.await() }.toMutableList()
-//                favorites.sortBy { it.city }
-//                _favoritesState.value = favorites.map { it.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm, true) }
-//            }
-//        }
     }
 
     fun deleteFromFavorites(city: String) {
