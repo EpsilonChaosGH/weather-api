@@ -4,8 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.screens.base.BaseViewModel
-import com.example.weather_api.app.utils.ConnectivityObserver
-import com.example.weather_api.app.utils.FORMAT_EEE_d_MMMM_HH_mm
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.share
 import com.example.weather_api.core_data.WeatherRepository
@@ -18,12 +16,14 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     weatherRepository: WeatherRepository,
-    connectivityObserver: ConnectivityObserver,
     logger: Logger
-) : BaseViewModel(weatherRepository, connectivityObserver, logger) {
+) : BaseViewModel(weatherRepository, logger) {
 
     private val _favoritesState = MutableLiveData<List<WeatherState>>()
     val favoritesState = _favoritesState.share()
+
+    private val _emptyListState = MutableLiveData<Boolean>()
+    val emptyListState = _emptyListState.share()
 
     init {
         listenCurrentState()
@@ -39,9 +39,12 @@ class FavoritesViewModel @Inject constructor(
 
         viewModelScope.safeLaunch {
             weatherRepository.listenFavoriteLocations().collect { list ->
-                if (list.isNotEmpty()) {
+                if (list.isEmpty()) {
+                    _emptyListState.value = true
+                } else {
+                    _emptyListState.value = false
                     _favoritesState.value = list.map { weather ->
-                        weather!!.weatherEntity.toWeatherState(FORMAT_EEE_d_MMMM_HH_mm, true)
+                        weather!!.weatherEntity.toWeatherState(isFavorites = true)
                     }
                 }
             }

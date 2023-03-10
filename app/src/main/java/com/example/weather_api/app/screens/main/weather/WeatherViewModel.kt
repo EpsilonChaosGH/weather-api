@@ -19,9 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     weatherRepository: WeatherRepository,
-    connectivityObserver: ConnectivityObserver,
     logger: Logger
-) : BaseViewModel(weatherRepository, connectivityObserver, logger) {
+) : BaseViewModel(weatherRepository, logger) {
 
     private val _weatherState = MutableLiveData<WeatherState>()
     val weatherState = _weatherState.share()
@@ -31,9 +30,6 @@ class WeatherViewModel @Inject constructor(
 
     private val _airState = MutableLiveData<AirState>()
     val airState = _airState.share()
-
-    private val _progressState = MutableLiveData<Boolean>()
-    val progressState = _progressState.share()
 
     init {
         listenCurrentState()
@@ -53,8 +49,7 @@ class WeatherViewModel @Inject constructor(
             weatherRepository.listenMainWeather().collect { weather ->
                 if (weather != null) {
                     _weatherState.value = weather.weatherEntity.toWeatherState(
-                        FORMAT_HH_mm,
-                        weather.isFavorites
+                        isFavorites = weather.isFavorites
                     )
                     _forecastState.value =
                         weather.forecastEntityList.map {
@@ -106,10 +101,13 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun showProgress() {
-        _progressState.value = true
+        if (_weatherState.value == null) return
+        _weatherState.value =
+            _weatherState.requireValue().copy(emptyCityError = false, weatherInProgress = true)
     }
 
     private fun hideProgress() {
-        _progressState.value = false
+        if (_weatherState.value == null) return
+        _weatherState.value = _weatherState.requireValue().copy(weatherInProgress = false)
     }
 }

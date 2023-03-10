@@ -7,7 +7,6 @@ import com.example.weather_api.core_data.mappers.toWeatherEntity
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.core_network.base.BaseRetrofitSource
 import com.example.weather_api.core_network.base.RetrofitConfig
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 

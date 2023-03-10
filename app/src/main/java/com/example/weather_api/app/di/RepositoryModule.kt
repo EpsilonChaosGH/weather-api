@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun weatherRepository(
+    abstract fun bindWeatherRepository(
         weatherRepositoryImpl: WeatherRepositoryImpl
     ): WeatherRepository
 }
