@@ -79,4 +79,5 @@
     <string name="title_o3">O3:</string>
     <string name="menu_weather">Weather</string>
     <string name="menu_favorites">Favorites</string>
+    <string name="favorites_list_is_empty">Favorites list is empty</string>
 </resources>

@@ -15,12 +15,27 @@ fun WeatherWithForecast.toMainWeatherEntity(): MainWeatherEntity = MainWeatherEn
     city = weather.weatherCity,
     isCurrent = weather.isCurrent,
     isFavorites = weather.isFavorites,
-    weatherEntity = weather.weather.toWeatherEntity(),
+    weatherEntity = weather.weather.toWeatherEntity(weather.weatherCity),
     airEntity = weather.air.toAirEntity(),
     forecastEntityList = forecastList.map { it.toForecastEntity() }
 )
 
 fun WeatherEntity.toWeatherDb(): WeatherDbEntity = WeatherDbEntity(
+    country = country,
+    temperature = temperature,
+    icon = icon,
+    description = description,
+    feelsLike = feelsLike,
+    humidity = humidity,
+    pressure = pressure,
+    windSpeed = windSpeed,
+    data = data,
+    timezone = timezone,
+    lon = lon,
+    lat = lat
+)
+
+fun WeatherDbEntity.toWeatherEntity(city: String): WeatherEntity = WeatherEntity(
     city = city,
     country = country,
     temperature = temperature,
@@ -36,23 +51,7 @@ fun WeatherEntity.toWeatherDb(): WeatherDbEntity = WeatherDbEntity(
     lat = lat
 )
 
-fun WeatherDbEntity.toWeatherEntity(): WeatherEntity = WeatherEntity(
-    city = city,
-    country = country,
-    temperature = temperature,
-    icon = icon,
-    description = description,
-    feelsLike = feelsLike,
-    humidity = humidity,
-    pressure = pressure,
-    windSpeed = windSpeed,
-    data = data,
-    timezone = timezone,
-    lon = lon,
-    lat = lat
-)
-
-fun WeatherEntity.toWeatherState(dataFormat: String, isFavorites: Boolean) = WeatherState(
+fun WeatherEntity.toWeatherState(isFavorites: Boolean) = WeatherState(
     city = city,
     country = country,
     temperature = "${temperature.roundToInt()}°C",

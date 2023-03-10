@@ -3,7 +3,6 @@ package com.example.weather_api.app.screens.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.R
-import com.example.weather_api.app.utils.ConnectivityObserver
 import com.example.weather_api.app.utils.MutableLiveEvent
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.app.utils.publishEvent
@@ -14,7 +13,6 @@ import kotlinx.coroutines.launch
 
 open class BaseViewModel(
     val weatherRepository: WeatherRepository,
-    val connectivityObserver: ConnectivityObserver,
     private val logger: Logger
 ) : ViewModel() {
 

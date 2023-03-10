@@ -65,14 +65,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         observeForecastState()
         observeWeatherState()
         observeAirState()
-        observerProgressState()
-    }
-
-    private fun observerProgressState() {
-        viewModel.progressState.observe(viewLifecycleOwner) { progressState ->
-            binding.progressBar.visibility =
-                if (progressState) View.VISIBLE else View.INVISIBLE
-        }
     }
 
     private fun observeEditorActionListener() {

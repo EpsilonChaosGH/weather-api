@@ -20,12 +20,12 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     override suspend fun listenMainWeather(): Flow<MainWeatherEntity?> {
-        return appDatabase.weatherDao().getCurrentWeatherFlow(isCurrent = true)
+        return appDatabase.weatherDao().getCurrentWeatherFlow()
             .map { it?.toMainWeatherEntity() }
     }
 
     override suspend fun listenFavoriteLocations(): Flow<List<MainWeatherEntity?>> {
-        return appDatabase.weatherDao().getFavoritesFlow(isFavorites = true)
+        return appDatabase.weatherDao().getFavoritesFlow()
             .map { list ->
                 list.map {
                     it?.toMainWeatherEntity()
@@ -52,7 +52,7 @@ class WeatherRepositoryImpl @Inject constructor(
         }
 
     override suspend fun refreshCurrentMainWeather() = wrapSQLiteException(Dispatchers.IO) {
-        getMainWeatherByCity(appDatabase.weatherDao().getCurrentCity(isCurrent = true))
+        getMainWeatherByCity(appDatabase.weatherDao().getCurrentCity())
     }
 
     override suspend fun addToFavoritesByCity(city: String) = wrapSQLiteException(Dispatchers.IO) {
@@ -62,7 +62,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun deleteFromFavoritesByCity(city: String) =
         wrapSQLiteException(Dispatchers.IO) {
-            if (appDatabase.weatherDao().getCurrentCity(true) == city) {
+            if (appDatabase.weatherDao().getCurrentCity() == city) {
                 appDatabase.weatherDao().updateFavorites(
                     UpdateFavoritesTuple(city = city, false)
                 )
@@ -79,7 +79,7 @@ class WeatherRepositoryImpl @Inject constructor(
         }
 
     override suspend fun refreshFavorites() = wrapSQLiteException(Dispatchers.IO) {
-        val favoritesList = appDatabase.weatherDao().getFavoritesCity(isFavorites = true)
+        val favoritesList = appDatabase.weatherDao().getFavoritesCity()
 
         val favoritesDef = mutableListOf<Deferred<MainWeatherEntity>>()
         favoritesList.map {
@@ -111,7 +111,7 @@ class WeatherRepositoryImpl @Inject constructor(
         val air = weatherSource.getAirPollutionByCoordinates(coordinates)
         val forecast = weatherSource.getForecastByCity(city)
         return MainWeatherEntity(
-            city = weather.city,
+            city = city,
             isCurrent = false,
             isFavorites = true,
             weatherEntity = weather,

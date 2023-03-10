@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeatherDao {
 
-    @Query("SELECT * FROM weather WHERE weather.is_current =:isCurrent")
-    fun getCurrentWeatherFlow(isCurrent: Boolean): Flow<WeatherWithForecast?>
+    @Query("SELECT * FROM weather WHERE weather.is_current = 1")
+    fun getCurrentWeatherFlow(): Flow<WeatherWithForecast?>
 
-    @Query("SELECT weather_city FROM weather WHERE weather.is_current =:isCurrent")
-    fun getCurrentCity(isCurrent: Boolean): String
+    @Query("SELECT weather_city FROM weather WHERE weather.is_current = 1")
+    fun getCurrentCity(): String
 
     @Update(entity = MainWeatherDbEntity::class)
     suspend fun updateFavorites(isFavorites: UpdateFavoritesTuple)
@@ -22,11 +22,11 @@ interface WeatherDao {
     @Query("SELECT EXISTS( SELECT weather_city  FROM weather WHERE weather_city = :city AND is_favorites = :isFavorites)")
     fun checkForFavorites(city: String, isFavorites: Boolean): Boolean
 
-    @Query("SELECT * FROM weather WHERE weather.is_favorites =:isFavorites")
-    fun getFavoritesFlow(isFavorites: Boolean): Flow<List<WeatherWithForecast?>>
+    @Query("SELECT * FROM weather WHERE weather.is_favorites = 1")
+    fun getFavoritesFlow(): Flow<List<WeatherWithForecast?>>
 
-    @Query("SELECT * FROM weather WHERE weather.is_favorites =:isFavorites")
-    fun getFavoritesCity(isFavorites: Boolean): List<CityTuple>
+    @Query("SELECT * FROM weather WHERE weather.is_favorites = 1")
+    fun getFavoritesCity(): List<CityTuple>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertForecast(forecast: List<ForecastDbEntity>)
@@ -34,14 +34,13 @@ interface WeatherDao {
     @Update(entity = MainWeatherDbEntity::class)
     suspend fun updateMainWeather(weather: UpdateMainWeatherTuple)
 
-
     @Transaction
     suspend fun setCurrentByCity(city: String) {
-        updateAllCurrent(current = true, new_current = false)
+        val currentCity = getCurrentCity()
+        if (city == currentCity) return
         updateCurrent(UpdateCurrentTuple(city = city, isCurrent = true))
+        updateCurrent(UpdateCurrentTuple(city = currentCity, isCurrent = false))
     }
-    @Query("UPDATE weather SET is_current = :new_current WHERE is_current IN (:current)")
-    fun updateAllCurrent(current: Boolean, new_current: Boolean)
     @Update(entity = MainWeatherDbEntity::class)
     suspend fun updateCurrent(isCurrent: UpdateCurrentTuple)
 

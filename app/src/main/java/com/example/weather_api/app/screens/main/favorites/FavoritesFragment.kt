@@ -39,6 +39,7 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
             recyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+        observeEmptyListState()
         observeFavoriteState()
         observeRefresh()
     }
@@ -58,6 +59,12 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
         viewModel.favoritesState.observe(viewLifecycleOwner) {
             adapter.favoritesList = it
             binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun observeEmptyListState() {
+        viewModel.emptyListState.observe(viewLifecycleOwner) {
+            binding.recyclerView.visibility = if (it) View.GONE else View.VISIBLE
         }
     }
 }
