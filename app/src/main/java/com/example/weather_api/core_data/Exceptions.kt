@@ -16,9 +16,6 @@ class EmptyFieldException(
     val field: Field
 ) : AppException()
 
-class EmptyFavoritesException(
-) : AppException()
-
 class ConnectionException(
     cause: Throwable
 ) : AppException(cause = cause)

@@ -14,7 +14,6 @@ interface WeatherRepository {
 
     suspend fun addToFavoritesByCity(city: String)
     suspend fun deleteFromFavoritesByCity(city: String)
-    suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity
     suspend fun refreshFavorites()
 
     suspend fun fromFavoritesMainWeatherToCurrent(city: String)

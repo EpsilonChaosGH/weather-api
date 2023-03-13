@@ -5,11 +5,8 @@ import com.example.weather_api.core_data.models.*
 import com.example.weather_api.core_db.room.AppDatabase
 import com.example.weather_api.core_db.room.entitity.*
 import com.example.weather_api.core_network.weather.WeatherSource
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,6 +14,7 @@ import javax.inject.Singleton
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherSource: WeatherSource,
     private val appDatabase: AppDatabase,
+    private val ioDispatcher: CoroutineDispatcher
 ) : WeatherRepository {
 
     override suspend fun listenMainWeather(): Flow<MainWeatherEntity?> {
@@ -51,17 +49,17 @@ class WeatherRepositoryImpl @Inject constructor(
             setCurrentWeather(weather = weather, air = air, forecast = forecast)
         }
 
-    override suspend fun refreshCurrentMainWeather() = wrapSQLiteException(Dispatchers.IO) {
+    override suspend fun refreshCurrentMainWeather() = wrapSQLiteException(ioDispatcher) {
         getMainWeatherByCity(appDatabase.weatherDao().getCurrentCity())
     }
 
-    override suspend fun addToFavoritesByCity(city: String) = wrapSQLiteException(Dispatchers.IO) {
+    override suspend fun addToFavoritesByCity(city: String) = wrapSQLiteException(ioDispatcher) {
         appDatabase.weatherDao()
             .updateFavorites(UpdateFavoritesTuple(city = city, isFavorites = true))
     }
 
     override suspend fun deleteFromFavoritesByCity(city: String) =
-        wrapSQLiteException(Dispatchers.IO) {
+        wrapSQLiteException(ioDispatcher) {
             if (appDatabase.weatherDao().getCurrentCity() == city) {
                 appDatabase.weatherDao().updateFavorites(
                     UpdateFavoritesTuple(city = city, false)
@@ -71,16 +69,8 @@ class WeatherRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getFavoriteWeatherByCoordinates(coordinates: Coordinates): WeatherEntity =
-        wrapBackendExceptions {
-            withContext(Dispatchers.IO) {
-                return@withContext weatherSource.getWeatherByCoordinates(coordinates)
-            }
-        }
-
-    override suspend fun refreshFavorites() = wrapSQLiteException(Dispatchers.IO) {
+    override suspend fun refreshFavorites() = wrapSQLiteException(ioDispatcher) {
         val favoritesList = appDatabase.weatherDao().getFavoritesCity()
-
         val favoritesDef = mutableListOf<Deferred<MainWeatherEntity>>()
         favoritesList.map {
             val response = async {
@@ -93,7 +83,7 @@ class WeatherRepositoryImpl @Inject constructor(
         favorites.forEach { updateFavorites(it) }
     }
 
-    private suspend fun updateFavorites(weather: MainWeatherEntity) {
+    private suspend fun updateFavorites(weather: MainWeatherEntity) = wrapSQLiteException(ioDispatcher) {
         appDatabase.weatherDao().updateMainWeather(
             UpdateMainWeatherTuple(
                 weatherCity = weather.city,
@@ -105,7 +95,7 @@ class WeatherRepositoryImpl @Inject constructor(
             .insertForecast(weather.forecastEntityList.map { it.toForecastDbEntity() })
     }
 
-    private suspend fun getMainWeatherByCityForFavorites(city: String): MainWeatherEntity {
+    private suspend fun getMainWeatherByCityForFavorites(city: String): MainWeatherEntity = wrapBackendExceptions {
         val weather = weatherSource.getWeatherByCity(city)
         val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
         val air = weatherSource.getAirPollutionByCoordinates(coordinates)
@@ -121,13 +111,13 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fromFavoritesMainWeatherToCurrent(city: String) =
-        wrapSQLiteException(Dispatchers.IO) {
+        wrapSQLiteException(ioDispatcher) {
             appDatabase.weatherDao().setCurrentByCity(city)
         }
 
     private suspend fun setCurrentWeather(
         weather: WeatherEntity, air: AirEntity, forecast: List<ForecastEntity>
-    ) = wrapSQLiteException(Dispatchers.IO) {
+    ) = wrapSQLiteException(ioDispatcher) {
         appDatabase.weatherDao().insertWeather(
             MainWeatherDbEntity(
                 weatherCity = weather.city,
