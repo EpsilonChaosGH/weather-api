@@ -52,9 +52,6 @@ open class BaseViewModel(
             } catch (e: Exception) {
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_internal)
-            } catch (e: StorageException) {
-                logError(e)
-                showToastString("empty favorites")
             }
         }
 
