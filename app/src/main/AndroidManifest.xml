@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
-            android:name=".app.screens.main.MainActivity" />
+            android:name=".app.screens.main.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
     </application>
 </manifest>

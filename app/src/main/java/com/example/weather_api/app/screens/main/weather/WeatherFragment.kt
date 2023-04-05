@@ -23,10 +23,8 @@ import com.example.weather_api.R
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
-import com.example.weather_api.app.utils.observeEvent
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
-import com.facebook.shimmer.Shimmer
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -83,32 +83,34 @@ class WeatherRepositoryImpl @Inject constructor(
         favorites.forEach { updateFavorites(it) }
     }
 
-    private suspend fun updateFavorites(weather: MainWeatherEntity) = wrapSQLiteException(ioDispatcher) {
-        appDatabase.weatherDao().updateMainWeather(
-            UpdateMainWeatherTuple(
-                weatherCity = weather.city,
-                weather = weather.weatherEntity.toWeatherDb(),
-                air = weather.airEntity.toAirDb()
+    private suspend fun updateFavorites(weather: MainWeatherEntity) =
+        wrapSQLiteException(ioDispatcher) {
+            appDatabase.weatherDao().updateMainWeather(
+                UpdateMainWeatherTuple(
+                    weatherCity = weather.city,
+                    weather = weather.weatherEntity.toWeatherDb(),
+                    air = weather.airEntity.toAirDb()
+                )
             )
-        )
-        appDatabase.weatherDao()
-            .insertForecast(weather.forecastEntityList.map { it.toForecastDbEntity() })
-    }
+            appDatabase.weatherDao()
+                .insertForecast(weather.forecastEntityList.map { it.toForecastDbEntity() })
+        }
 
-    private suspend fun getMainWeatherByCityForFavorites(city: String): MainWeatherEntity = wrapBackendExceptions {
-        val weather = weatherSource.getWeatherByCity(city)
-        val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
-        val air = weatherSource.getAirPollutionByCoordinates(coordinates)
-        val forecast = weatherSource.getForecastByCity(city)
-        return MainWeatherEntity(
-            city = city,
-            isCurrent = false,
-            isFavorites = true,
-            weatherEntity = weather,
-            airEntity = air,
-            forecastEntityList = forecast
-        )
-    }
+    private suspend fun getMainWeatherByCityForFavorites(city: String): MainWeatherEntity =
+        wrapBackendExceptions {
+            val weather = weatherSource.getWeatherByCity(city)
+            val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
+            val air = weatherSource.getAirPollutionByCoordinates(coordinates)
+            val forecast = weatherSource.getForecastByCity(city)
+            return MainWeatherEntity(
+                city = city,
+                isCurrent = false,
+                isFavorites = true,
+                weatherEntity = weather,
+                airEntity = air,
+                forecastEntityList = forecast
+            )
+        }
 
     override suspend fun fromFavoritesMainWeatherToCurrent(city: String) =
         wrapSQLiteException(ioDispatcher) {

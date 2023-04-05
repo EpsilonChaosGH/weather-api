@@ -41,6 +41,7 @@ interface WeatherDao {
         updateCurrent(UpdateCurrentTuple(city = city, isCurrent = true))
         updateCurrent(UpdateCurrentTuple(city = currentCity, isCurrent = false))
     }
+
     @Update(entity = MainWeatherDbEntity::class)
     suspend fun updateCurrent(isCurrent: UpdateCurrentTuple)
 
@@ -50,8 +51,10 @@ interface WeatherDao {
         deleteMainWeather(city)
         deleteMainWeather(isFavorites = false, isCurrent = false)
     }
+
     @Query("DELETE FROM weather WHERE weather.weather_city = :city")
     suspend fun deleteMainWeather(city: String)
+
     @Query("DELETE FROM weather WHERE is_favorites = :isFavorites AND is_current = :isCurrent")
     suspend fun deleteMainWeather(isFavorites: Boolean, isCurrent: Boolean)
 }
