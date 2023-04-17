@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +30,13 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
+class WeatherFragment : Fragment(R.layout.fragment_weather) {
 
-    override val viewModel by viewModels<WeatherViewModel>()
+    private val viewModel by viewModels<WeatherViewModel>()
 
     private val binding by viewBinding(FragmentWeatherBinding::bind)
 
-    private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { WeatherAdapter() }
+    private val adapter = WeatherAdapter()
 
     private val fusedLocationClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -69,7 +70,7 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
         binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
-                    if (binding.cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.City)
+                    if (binding.cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.CITY)
                     viewModel.getMainWeatherByCity(binding.cityEditText.text.toString())
                     return@OnEditorActionListener true
                 } catch (e: EmptyFieldException) {

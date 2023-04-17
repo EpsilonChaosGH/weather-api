@@ -96,7 +96,7 @@ class WeatherViewModel @Inject constructor(
 
     fun emptyFieldException(e: EmptyFieldException) {
         _weatherState.value = _weatherState.requireValue().copy(
-            emptyCityError = e.field == Field.City
+            emptyCityError = e.field == Field.CITY
         )
     }
 

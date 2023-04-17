@@ -33,13 +33,13 @@ fun <T> LiveEvent<T>.observeEvent(lifecycleOwner: LifecycleOwner, listener: Even
 }
 
 // --- unit events:
-typealias MutableUnitLiveEvent = MutableLiveEvent<Unit>
-typealias UnitLiveEvent = LiveEvent<Unit>
-typealias UnitEventListener = () -> Unit
-
-fun MutableUnitLiveEvent.publishEvent() = publishEvent(Unit)
-fun UnitLiveEvent.observeEvent(lifecycleOwner: LifecycleOwner, listener: UnitEventListener) {
-    observeEvent(lifecycleOwner) { _ ->
-        listener()
-    }
-}
+//typealias MutableUnitLiveEvent = MutableLiveEvent<Unit>
+//typealias UnitLiveEvent = LiveEvent<Unit>
+//typealias UnitEventListener = () -> Unit
+//
+//fun MutableUnitLiveEvent.publishEvent() = publishEvent(Unit)
+//fun UnitLiveEvent.observeEvent(lifecycleOwner: LifecycleOwner, listener: UnitEventListener) {
+//    observeEvent(lifecycleOwner) { _ ->
+//        listener()
+//    }
+//}

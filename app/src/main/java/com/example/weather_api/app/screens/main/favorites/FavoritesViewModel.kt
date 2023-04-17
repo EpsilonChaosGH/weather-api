@@ -1,14 +1,13 @@
 package com.example.weather_api.app.screens.main.favorites
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_api.app.model.WeatherState
+import com.example.weather_api.app.model.FavoritesState
 import com.example.weather_api.app.screens.base.BaseViewModel
 import com.example.weather_api.app.utils.logger.Logger
-import com.example.weather_api.app.utils.share
 import com.example.weather_api.core_data.WeatherRepository
 import com.example.weather_api.core_data.mappers.toWeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,35 +18,19 @@ class FavoritesViewModel @Inject constructor(
     logger: Logger
 ) : BaseViewModel(weatherRepository, logger) {
 
-    private val _favoritesState = MutableLiveData<List<WeatherState>>()
-    val favoritesState = _favoritesState.share()
-
-    private val _emptyListState = MutableLiveData<Boolean>()
-    val emptyListState = _emptyListState.share()
+    private val _favoritesState: MutableStateFlow<FavoritesState> =
+        MutableStateFlow(FavoritesState())
+    val favoritesState: StateFlow<FavoritesState> = _favoritesState.asStateFlow()
 
     init {
         listenCurrentState()
     }
 
-    suspend fun refreshFavorites() {
+    fun refreshFavorites() {
         viewModelScope.safeLaunch {
+            _favoritesState.value = _favoritesState.value.copy(refreshState = true)
             weatherRepository.refreshFavorites()
-        }.join()
-    }
-
-    private fun listenCurrentState() {
-
-        viewModelScope.safeLaunch {
-            weatherRepository.listenFavoriteLocations().collect { list ->
-                if (list.isEmpty()) {
-                    _emptyListState.value = true
-                } else {
-                    _emptyListState.value = false
-                    _favoritesState.value = list.map { weather ->
-                        weather!!.weatherEntity.toWeatherState(isFavorites = true)
-                    }
-                }
-            }
+            _favoritesState.value = _favoritesState.value.copy(refreshState = false)
         }
     }
 
@@ -58,8 +41,23 @@ class FavoritesViewModel @Inject constructor(
     }
 
     fun setCurrentWeather(city: String) {
-        viewModelScope.launch {
+        viewModelScope.safeLaunch {
             weatherRepository.fromFavoritesMainWeatherToCurrent(city)
+        }
+    }
+
+    private fun listenCurrentState() {
+        viewModelScope.safeLaunch {
+            weatherRepository.listenFavoriteLocations().collect { list ->
+                if (list.isEmpty()) {
+                    _favoritesState.value = _favoritesState.value.copy(emptyListState = true)
+                } else {
+                    _favoritesState.value = _favoritesState.value.copy(emptyListState = false)
+                    _favoritesState.value = _favoritesState.value.copy(list.map { weather ->
+                        weather!!.weatherEntity.toWeatherState(isFavorites = true)
+                    })
+                }
+            }
         }
     }
 }

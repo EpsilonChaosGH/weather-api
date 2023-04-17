@@ -23,7 +23,6 @@ class RoomModule {
             AppDatabase::class.java,
             "WeatherApp-DB"
         )
-            //.createFromAsset("init_db.db")
             .build()
 
     @Provides

@@ -12,7 +12,7 @@ data class WeatherState(
     val pressure: String,
     val windSpeed: String,
     val data: String,
-    var isFavorites: Boolean,
+    val isFavorites: Boolean,
     val emptyCityError: Boolean = false,
     val weatherInProgress: Boolean = false
 ) {
