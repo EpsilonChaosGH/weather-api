@@ -1,5 +1,6 @@
 package com.example.weather_api.app.screens.base
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.R
@@ -30,8 +31,9 @@ open class BaseViewModel(
         _showErrorMessageEvent.publishEvent(message)
     }
 
-    fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) =
+    fun CoroutineScope.safeLaunch(block: suspend CoroutineScope.() -> Unit) {
         viewModelScope.launch() {
+            _showErrorMessageResEvent.publishEvent(R.string.error_404_city_not_found)
             try {
                 block.invoke(this)
             } catch (e: ConnectionException) {
@@ -42,6 +44,7 @@ open class BaseViewModel(
                 _showErrorMessageEvent.publishEvent(e.message ?: "")
             } catch (e: CityNotFoundException) {
                 logError(e)
+                Log.e("aaa", "as12")
                 _showErrorMessageResEvent.publishEvent(R.string.error_404_city_not_found)
             } catch (e: InvalidApiKeyException) {
                 logError(e)
@@ -53,6 +56,7 @@ open class BaseViewModel(
                 logError(e)
                 _showErrorMessageResEvent.publishEvent(R.string.error_internal)
             }
+        }
         }
 
     private fun logError(e: Throwable) {

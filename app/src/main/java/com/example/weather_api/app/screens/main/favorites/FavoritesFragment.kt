@@ -55,10 +55,12 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .distinctUntilChanged()
                 .collect { favoritesState ->
-                    adapter.favoritesList = favoritesState.favorites
-                    binding.recyclerView.visibility =
-                        if (favoritesState.emptyListState) View.GONE else View.VISIBLE
-                    binding.refreshLayout.isRefreshing = favoritesState.refreshState
+                    favoritesState?.let {
+                        adapter.favoritesList = favoritesState.favorites
+                        binding.recyclerView.visibility =
+                            if (favoritesState.emptyListState) View.GONE else View.VISIBLE
+                        binding.refreshLayout.isRefreshing = favoritesState.refreshState
+                    }
                 }
         }
     }

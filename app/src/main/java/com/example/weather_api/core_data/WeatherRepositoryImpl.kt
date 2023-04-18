@@ -32,6 +32,7 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMainWeatherByCity(city: String) = wrapBackendExceptions {
+        delay(1000)
         val weather = weatherSource.getWeatherByCity(city)
         val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
         val air = weatherSource.getAirPollutionByCoordinates(coordinates)
@@ -42,6 +43,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun getMainWeatherByCoordinates(coordinates: Coordinates) =
         wrapBackendExceptions {
+            delay(1000)
             val weather = weatherSource.getWeatherByCoordinates(coordinates)
             val air = weatherSource.getAirPollutionByCoordinates(coordinates)
             val forecast = weatherSource.getForecastByCoordinates(coordinates)

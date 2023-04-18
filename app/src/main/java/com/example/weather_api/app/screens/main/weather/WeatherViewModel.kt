@@ -1,19 +1,19 @@
 package com.example.weather_api.app.screens.main.weather
 
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.*
 import com.example.weather_api.app.screens.base.BaseViewModel
-import com.example.weather_api.app.utils.*
 import com.example.weather_api.app.utils.logger.Logger
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.core_data.WeatherRepository
-import com.example.weather_api.core_data.mappers.toAirPollutionState
-import com.example.weather_api.core_data.mappers.toForecastState
-import com.example.weather_api.core_data.mappers.toWeatherState
+import com.example.weather_api.core_data.mappers.toMainWeatherState
 import com.example.weather_api.core_data.models.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,92 +22,72 @@ class WeatherViewModel @Inject constructor(
     logger: Logger
 ) : BaseViewModel(weatherRepository, logger) {
 
-    private val _weatherState = MutableLiveData<WeatherState>()
-    val weatherState = _weatherState.share()
 
-    private val _forecastState = MutableLiveData<List<ForecastState>>()
-    val forecastState = _forecastState.share()
-
-    private val _airState = MutableLiveData<AirState>()
-    val airState = _airState.share()
+    private val _mainWeatherState: MutableStateFlow<MainWeatherState?> =
+        MutableStateFlow(null)
+    val mainWeatherState: StateFlow<MainWeatherState?> = _mainWeatherState.asStateFlow()
 
     init {
         listenCurrentState()
-        viewModelScope.safeLaunch {
-            refreshCurrentMainWeather()
-        }
+        refreshCurrentMainWeather()
     }
 
-    suspend fun refreshCurrentMainWeather() {
+    fun refreshCurrentMainWeather() {
         viewModelScope.safeLaunch {
-            weatherRepository.refreshCurrentMainWeather()
-        }.join()
-    }
-
-    private fun listenCurrentState() {
-        viewModelScope.launch {
-            weatherRepository.listenMainWeather().collect { weather ->
-                if (weather != null) {
-                    _weatherState.value = weather.weatherEntity.toWeatherState(
-                        isFavorites = weather.isFavorites
-                    )
-                    _forecastState.value =
-                        weather.forecastEntityList.map {
-                            it.toForecastState(
-                                FORMAT_EEE_HH_mm,
-                                weather.weatherEntity.timezone
-                            )
-                        }
-                    _airState.value = weather.airEntity.toAirPollutionState()
-                }
-            }
+            _mainWeatherState.value = _mainWeatherState.value?.copy(refreshState = true)
+            weatherRepository.refreshFavorites()
+            _mainWeatherState.value = _mainWeatherState.value?.copy(refreshState = false)
         }
     }
 
     fun getMainWeatherByCity(city: String) {
-        viewModelScope.launch {
+        viewModelScope.safeLaunch {
             showProgress()
-            safeLaunch {
-                weatherRepository.getMainWeatherByCity(city)
-            }.join()
+            weatherRepository.getMainWeatherByCity(city)
             hideProgress()
         }
     }
 
     fun getMainWeatherByCoordinate(coordinates: Coordinates) {
-        showProgress()
-        viewModelScope.launch {
-            safeLaunch {
-                weatherRepository.getMainWeatherByCoordinates(coordinates)
-            }.join()
+        viewModelScope.safeLaunch {
+            showProgress()
+            weatherRepository.getMainWeatherByCoordinates(coordinates)
             hideProgress()
         }
     }
 
     fun addOrRemoveFromFavorite() {
         viewModelScope.safeLaunch {
-            if (weatherState.value!!.isFavorites) {
-                weatherRepository.deleteFromFavoritesByCity(_weatherState.value?.city ?: "")
-            } else {
-                weatherRepository.addToFavoritesByCity(_weatherState.value?.city ?: "")
+            _mainWeatherState.value?.let { value ->
+                if (value.isFavorites) {
+                    weatherRepository.deleteFromFavoritesByCity(value.city)
+                } else {
+                    weatherRepository.addToFavoritesByCity(value.city)
+                }
             }
         }
     }
 
     fun emptyFieldException(e: EmptyFieldException) {
-        _weatherState.value = _weatherState.requireValue().copy(
-            emptyCityError = e.field == Field.CITY
-        )
+        _mainWeatherState.value =
+            _mainWeatherState.value?.copy(emptyCityError = e.field == Field.CITY)
+    }
+
+    private fun listenCurrentState() {
+        viewModelScope.safeLaunch {
+            weatherRepository.listenMainWeather().collect { mainWeather ->
+                if (mainWeather != null) {
+                    _mainWeatherState.value = mainWeather.toMainWeatherState()
+                }
+            }
+        }
     }
 
     private fun showProgress() {
-        if (_weatherState.value == null) return
-        _weatherState.value =
-            _weatherState.requireValue().copy(emptyCityError = false, weatherInProgress = true)
+        _mainWeatherState.value = _mainWeatherState.value?.copy(weatherInProgress = true)
     }
 
     private fun hideProgress() {
-        if (_weatherState.value == null) return
-        _weatherState.value = _weatherState.requireValue().copy(weatherInProgress = false)
+        _mainWeatherState.value = _mainWeatherState.value?.copy(weatherInProgress = false)
     }
 }

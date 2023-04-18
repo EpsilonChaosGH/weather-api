@@ -12,10 +12,5 @@ data class WeatherState(
     val pressure: String,
     val windSpeed: String,
     val data: String,
-    val isFavorites: Boolean,
-    val emptyCityError: Boolean = false,
-    val weatherInProgress: Boolean = false
-) {
-    val showProgress: Boolean get() = weatherInProgress
-    val enableViews: Boolean get() = !weatherInProgress
-}
+    val isFavorites: Boolean
+)
