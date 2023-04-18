@@ -1,7 +1,9 @@
 package com.example.weather_api.core_data.mappers
 
+import com.example.weather_api.app.model.MainWeatherState
 import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.app.model.WeatherType
+import com.example.weather_api.app.utils.FORMAT_EEE_HH_mm
 import com.example.weather_api.app.utils.diffFormat
 import com.example.weather_api.core_data.models.MainWeatherEntity
 import com.example.weather_api.core_data.models.WeatherEntity
@@ -79,4 +81,18 @@ fun GetWeatherResponseEntity.toWeatherEntity(): WeatherEntity = WeatherEntity(
     timezone = timezone,
     lon = coord.lon.toString(),
     lat = coord.lat.toString(),
+)
+
+fun MainWeatherEntity.toMainWeatherState() = MainWeatherState(
+    city = city,
+    isCurrent = isCurrent,
+    isFavorites = isFavorites,
+    weatherState = weatherEntity.toWeatherState(isFavorites),
+    airState = airEntity.toAirState(),
+    forecastState = forecastEntityList.map {
+        it.toForecastState(
+            FORMAT_EEE_HH_mm,
+            weatherEntity.timezone
+        )
+    }
 )

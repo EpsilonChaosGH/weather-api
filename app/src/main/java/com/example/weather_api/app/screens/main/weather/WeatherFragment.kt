@@ -15,31 +15,38 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
+import com.example.weather_api.app.model.AirState
 import com.example.weather_api.app.model.Field
+import com.example.weather_api.app.model.WeatherState
 import com.example.weather_api.core_data.models.Coordinates
 import com.example.weather_api.app.screens.base.BaseFragment
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
+class WeatherFragment : Fragment(R.layout.fragment_weather) {
 
-    override val viewModel by viewModels<WeatherViewModel>()
+    private val viewModel by viewModels<WeatherViewModel>()
 
     private val binding by viewBinding(FragmentWeatherBinding::bind)
-
-    private val adapter by lazy(mode = LazyThreadSafetyMode.NONE) { WeatherAdapter() }
 
     private val fusedLocationClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
+
+    private val adapter = WeatherAdapter()
 
     private val requestLocationLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -56,20 +63,49 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
 
             favoriteImageView.setOnClickListener { viewModel.addOrRemoveFromFavorite() }
             searchByCoordinatesImageView.setOnClickListener { getWeatherByCoordinates() }
+
+            refreshLayout.setColorSchemeResources(R.color.main_text_color)
+            refreshLayout.setProgressBackgroundColorSchemeResource(R.color.main_color)
+            refreshLayout.setOnRefreshListener {
+                lifecycleScope.launchWhenStarted {
+                    viewModel.refreshCurrentMainWeather()
+                }
+            }
         }
 
         observeEditorActionListener()
-        observeRefresh()
-        observeForecastState()
-        observeWeatherState()
-        observeAirState()
+        observeMainState()
+    }
+
+    private fun observeMainState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.mainWeatherState
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .distinctUntilChanged()
+                .collect { mainWeatherState ->
+                    mainWeatherState?.let {
+                        setAirState(mainWeatherState.airState)
+                        setWeatherState(mainWeatherState.weatherState)
+                        binding.refreshLayout.isRefreshing = mainWeatherState.refreshState
+                        adapter.weatherList = mainWeatherState.forecastState
+                        with(binding) {
+                            cityEditText.error =
+                                if (mainWeatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
+                            cityTextInput.isEnabled = mainWeatherState.enableViews
+                            searchByCoordinatesImageView.isEnabled = mainWeatherState.enableViews
+                            progressBar.visibility =
+                                if (mainWeatherState.showProgress) View.VISIBLE else View.INVISIBLE
+                        }
+                    }
+                }
+        }
     }
 
     private fun observeEditorActionListener() {
         binding.cityEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
-                    if (binding.cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.City)
+                    if (binding.cityEditText.text!!.isBlank()) throw EmptyFieldException(Field.CITY)
                     viewModel.getMainWeatherByCity(binding.cityEditText.text.toString())
                     return@OnEditorActionListener true
                 } catch (e: EmptyFieldException) {
@@ -78,17 +114,6 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
             }
             false
         })
-    }
-
-    private fun observeRefresh() {
-        binding.refreshLayout.setColorSchemeResources(R.color.main_text_color)
-        binding.refreshLayout.setProgressBackgroundColorSchemeResource(R.color.main_color)
-        binding.refreshLayout.setOnRefreshListener {
-            lifecycleScope.launchWhenStarted {
-                viewModel.refreshCurrentMainWeather()
-                binding.refreshLayout.isRefreshing = false
-            }
-        }
     }
 
     private fun getWeatherByCoordinates() {
@@ -117,68 +142,49 @@ class WeatherFragment : BaseFragment(R.layout.fragment_weather) {
             }
     }
 
-    private fun observeForecastState() {
-        viewModel.forecastState.observe(viewLifecycleOwner) {
-            adapter.weatherList = it
-        }
-    }
+    private fun setWeatherState(weatherState: WeatherState) {
+        with(binding) {
+            cityNameTextView.text = weatherState.city
+            temperatureTextView.text = weatherState.temperature
+            currentWeatherTextView.text = weatherState.description
+            currentDateTextView.text = weatherState.data
+            feelsLikeTextView.text = weatherState.feelsLike
+            humidityTextView.text = weatherState.humidity
+            pressureTextView.text = weatherState.pressure
+            windSpeedTextView.text = weatherState.windSpeed
+            weatherIconImageView.setImageResource(weatherState.weatherType.iconResId)
 
-    private fun observeWeatherState() {
-        viewModel.weatherState.observe(viewLifecycleOwner) { weatherState ->
-            with(binding) {
-                cityEditText.error =
-                    if (weatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
-
-                cityTextInput.isEnabled = weatherState.enableViews
-                searchByCoordinatesImageView.isEnabled = weatherState.enableViews
-
-                cityNameTextView.text = weatherState.city
-                temperatureTextView.text = weatherState.temperature
-                currentWeatherTextView.text = weatherState.description
-                currentDateTextView.text = weatherState.data
-                feelsLikeTextView.text = weatherState.feelsLike
-                humidityTextView.text = weatherState.humidity
-                pressureTextView.text = weatherState.pressure
-                windSpeedTextView.text = weatherState.windSpeed
-                weatherIconImageView.setImageResource(weatherState.weatherType.iconResId)
-
-                if (weatherState.isFavorites) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
-                else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-
-                progressBar.visibility =
-                    if (weatherState.showProgress) View.VISIBLE else View.INVISIBLE
-            }
+            if (weatherState.isFavorites) favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+            else favoriteImageView.setImageResource(R.drawable.ic_baseline_favorite_border_24)
         }
     }
 
     @SuppressLint("ResourceType")
-    private fun observeAirState() {
-        viewModel.airState.observe(viewLifecycleOwner) { airState ->
-            with(binding) {
-                valueNO2.text = airState.no2
-                qualityNO2.text = getString(airState.no2Quality.qualityResId)
-                qualityNO2.setTextColor(
-                    ContextCompat.getColor(requireContext(), airState.no2Quality.colorResId)
-                )
+    private fun setAirState(airState: AirState) {
+        with(binding) {
+            valueNO2.text = airState.no2
+            qualityNO2.text = getString(airState.no2Quality.qualityResId)
+            qualityNO2.setTextColor(
+                ContextCompat.getColor(requireContext(), airState.no2Quality.colorResId)
+            )
 
-                valueO3.text = airState.o3
-                qualityO3.text = getString(airState.o3Quality.qualityResId)
-                qualityO3.setTextColor(
-                    ContextCompat.getColor(requireContext(), airState.o3Quality.colorResId)
-                )
+            valueO3.text = airState.o3
+            qualityO3.text = getString(airState.o3Quality.qualityResId)
+            qualityO3.setTextColor(
+                ContextCompat.getColor(requireContext(), airState.o3Quality.colorResId)
+            )
 
-                valuePM10.text = airState.pm10
-                qualityPM10.text = getString(airState.pm10Quality.qualityResId)
-                qualityPM10.setTextColor(
-                    ContextCompat.getColor(requireContext(), airState.pm10Quality.colorResId)
-                )
+            valuePM10.text = airState.pm10
+            qualityPM10.text = getString(airState.pm10Quality.qualityResId)
+            qualityPM10.setTextColor(
+                ContextCompat.getColor(requireContext(), airState.pm10Quality.colorResId)
+            )
 
-                valuePM25.text = airState.pm25
-                qualityPM25.text = getString(airState.pm25Quality.qualityResId)
-                qualityPM25.setTextColor(
-                    ContextCompat.getColor(requireContext(), airState.pm25Quality.colorResId)
-                )
-            }
+            valuePM25.text = airState.pm25
+            qualityPM25.text = getString(airState.pm25Quality.qualityResId)
+            qualityPM25.setTextColor(
+                ContextCompat.getColor(requireContext(), airState.pm25Quality.colorResId)
+            )
         }
     }
 

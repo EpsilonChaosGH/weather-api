@@ -28,7 +28,7 @@ fun GetAirRepositoryEntity.toAirPollutionEntity() = AirEntity(
     pm25 = list.firstOrNull()?.components?.get("pm2_5") ?: -1.0
 )
 
-fun AirEntity.toAirPollutionState() = AirState(
+fun AirEntity.toAirState() = AirState(
     no2 = "${no2.roundToInt()} μg/m3",
     no2Quality = checkNo2(no2),
     o3 = "${o3.roundToInt()} μg/m3",
