@@ -2,6 +2,8 @@ package com.example.weather_api.app.screens.main.favorites
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -10,16 +12,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
-import com.example.weather_api.app.screens.base.BaseFragment
+import com.example.weather_api.app.utils.observeEventFlow
 import com.example.weather_api.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
+class FavoritesFragment : Fragment(R.layout.fragment_favorite) {
 
-    override val viewModel by viewModels<FavoritesViewModel>()
+    private val viewModel by viewModels<FavoritesViewModel>()
 
     private val binding by viewBinding(FragmentFavoriteBinding::bind)
 
@@ -46,7 +48,18 @@ class FavoritesFragment : BaseFragment(R.layout.fragment_favorite) {
                 viewModel.refreshFavorites()
             }
         }
+        observeEvents()
         observeFavoritesState()
+    }
+
+    private fun observeEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.showErrorMessageResEvent.observeEventFlow(viewLifecycleOwner.lifecycle) {
+                it?.let {
+                    Toast.makeText(requireContext(), getString(it), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun observeFavoritesState() {
