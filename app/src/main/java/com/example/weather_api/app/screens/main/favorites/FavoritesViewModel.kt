@@ -1,21 +1,25 @@
 package com.example.weather_api.app.screens.main.favorites
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.FavoritesState
-import com.example.weather_api.app.screens.base.BaseViewModel
-import com.example.weather_api.app.utils.logger.Logger
+import com.example.weather_api.app.utils.Event
+import com.example.weather_api.app.utils.safeLaunchAsync
 import com.example.weather_api.core_data.WeatherRepository
 import com.example.weather_api.core_data.mappers.toWeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    weatherRepository: WeatherRepository,
-    logger: Logger
-) : BaseViewModel(weatherRepository, logger) {
+    private val weatherRepository: WeatherRepository,
+) : ViewModel() {
+
+    private val _showErrorMessageResEvent = MutableStateFlow<Event<Int?>>(Event(null))
+    val showErrorMessageResEvent = _showErrorMessageResEvent.asStateFlow()
 
     private val _favoritesState: MutableStateFlow<FavoritesState?> = MutableStateFlow(null)
     val favoritesState: StateFlow<FavoritesState?> = _favoritesState.asStateFlow()
@@ -25,38 +29,53 @@ class FavoritesViewModel @Inject constructor(
     }
 
     fun refreshFavorites() {
-        viewModelScope.safeLaunch {
-            _favoritesState.value = _favoritesState.value?.copy(refreshState = true)
-            weatherRepository.refreshFavorites()
-            _favoritesState.value = _favoritesState.value?.copy(refreshState = false)
+        viewModelScope.launch {
+            val result = viewModelScope.safeLaunchAsync {
+                _favoritesState.value = _favoritesState.value?.copy(refreshState = true)
+                weatherRepository.refreshFavorites()
+                _favoritesState.value = _favoritesState.value?.copy(refreshState = false)
+            }
+            _showErrorMessageResEvent.value = Event(result.await())
         }
     }
 
     fun deleteFromFavorites(city: String) {
-        viewModelScope.safeLaunch {
-            weatherRepository.deleteFromFavoritesByCity(city)
+        viewModelScope.launch {
+            val result = viewModelScope.safeLaunchAsync {
+                weatherRepository.deleteFromFavoritesByCity(city)
+            }
+            _showErrorMessageResEvent.value = Event(result.await())
         }
     }
 
     fun setCurrentWeather(city: String) {
-        viewModelScope.safeLaunch {
-            weatherRepository.fromFavoritesMainWeatherToCurrent(city)
+        viewModelScope.launch {
+
+            val result = viewModelScope.safeLaunchAsync {
+                weatherRepository.fromFavoritesMainWeatherToCurrent(city)
+            }
+            _showErrorMessageResEvent.value = Event(result.await())
         }
     }
 
     private fun listenCurrentState() {
-        viewModelScope.safeLaunch {
-            weatherRepository.listenFavoriteLocations().collect { list ->
-                if (list.isEmpty()) {
-                    _favoritesState.value = _favoritesState.value?.copy(emptyListState = true)
-                } else {
-                    _favoritesState.value = _favoritesState.value?.copy(emptyListState = false)
+        viewModelScope.launch {
 
-                    _favoritesState.value = FavoritesState(favorites = list.map {
-                        it!!.weatherEntity.toWeatherState(isFavorites = true)
-                    })
+            val result = viewModelScope.safeLaunchAsync {
+                weatherRepository.listenFavoriteLocations().collect { list ->
+                    if (list.isEmpty()) {
+                        _favoritesState.value = _favoritesState.value?.copy(emptyListState = true)
+                    } else {
+                        _favoritesState.value = _favoritesState.value?.copy(emptyListState = false)
+
+                        _favoritesState.value = FavoritesState(favorites = list.map {
+                            it!!.weatherEntity.toWeatherState(isFavorites = true)
+                        })
+                    }
                 }
             }
+
+            _showErrorMessageResEvent.value = Event(result.await())
         }
     }
 }

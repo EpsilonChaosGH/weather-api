@@ -11,14 +11,13 @@ import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -26,14 +25,13 @@ import com.example.weather_api.R
 import com.example.weather_api.app.model.AirState
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.app.model.WeatherState
+import com.example.weather_api.app.utils.collectEventFlow
+import com.example.weather_api.app.utils.collectFlow
 import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.app.screens.base.BaseFragment
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WeatherFragment : Fragment(R.layout.fragment_weather) {
@@ -75,29 +73,29 @@ class WeatherFragment : Fragment(R.layout.fragment_weather) {
 
         observeEditorActionListener()
         observeMainState()
+        observeEvents()
+    }
+
+    private fun observeEvents() {
+        collectEventFlow(viewModel.showErrorMessageResEvent) { massage ->
+            Toast.makeText(requireContext(), getString(massage), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun observeMainState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.mainWeatherState
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .distinctUntilChanged()
-                .collect { mainWeatherState ->
-                    mainWeatherState?.let {
-                        setAirState(mainWeatherState.airState)
-                        setWeatherState(mainWeatherState.weatherState)
-                        binding.refreshLayout.isRefreshing = mainWeatherState.refreshState
-                        adapter.weatherList = mainWeatherState.forecastState
-                        with(binding) {
-                            cityEditText.error =
-                                if (mainWeatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
-                            cityTextInput.isEnabled = mainWeatherState.enableViews
-                            searchByCoordinatesImageView.isEnabled = mainWeatherState.enableViews
-                            progressBar.visibility =
-                                if (mainWeatherState.showProgress) View.VISIBLE else View.INVISIBLE
-                        }
-                    }
-                }
+        collectFlow(viewModel.mainWeatherState) { mainWeatherState ->
+            setAirState(mainWeatherState.airState)
+            setWeatherState(mainWeatherState.weatherState)
+            binding.refreshLayout.isRefreshing = mainWeatherState.refreshState
+            adapter.weatherList = mainWeatherState.forecastState
+            with(binding) {
+                cityEditText.error =
+                    if (mainWeatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
+                cityTextInput.isEnabled = mainWeatherState.enableViews
+                searchByCoordinatesImageView.isEnabled = mainWeatherState.enableViews
+                progressBar.visibility =
+                    if (mainWeatherState.showProgress) View.VISIBLE else View.INVISIBLE
+            }
         }
     }
 
