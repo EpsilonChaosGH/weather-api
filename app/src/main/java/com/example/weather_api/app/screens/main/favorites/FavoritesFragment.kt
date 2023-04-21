@@ -5,18 +5,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.weather_api.R
-import com.example.weather_api.app.utils.observeEventFlow
+import com.example.weather_api.app.utils.collectEventFlow
+import com.example.weather_api.app.utils.collectFlow
 import com.example.weather_api.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment(R.layout.fragment_favorite) {
@@ -53,28 +49,17 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorite) {
     }
 
     private fun observeEvents() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.showErrorMessageResEvent.observeEventFlow(viewLifecycleOwner.lifecycle) {
-                it?.let {
-                    Toast.makeText(requireContext(), getString(it), Toast.LENGTH_SHORT).show()
-                }
-            }
+        collectEventFlow(viewModel.showErrorMessageResEvent) { massage ->
+            Toast.makeText(requireContext(), getString(massage), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun observeFavoritesState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favoritesState
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .distinctUntilChanged()
-                .collect { favoritesState ->
-                    favoritesState?.let {
-                        adapter.favoritesList = favoritesState.favorites
-                        binding.recyclerView.visibility =
-                            if (favoritesState.emptyListState) View.GONE else View.VISIBLE
-                        binding.refreshLayout.isRefreshing = favoritesState.refreshState
-                    }
-                }
+        collectFlow(viewModel.favoritesState) { favoritesState ->
+            adapter.favoritesList = favoritesState.favorites
+            binding.recyclerView.visibility =
+                if (favoritesState.emptyListState) View.GONE else View.VISIBLE
+            binding.refreshLayout.isRefreshing = favoritesState.refreshState
         }
     }
 }

@@ -25,14 +25,13 @@ import com.example.weather_api.R
 import com.example.weather_api.app.model.AirState
 import com.example.weather_api.app.model.Field
 import com.example.weather_api.app.model.WeatherState
+import com.example.weather_api.app.utils.collectEventFlow
+import com.example.weather_api.app.utils.collectFlow
 import com.example.weather_api.core_data.models.Coordinates
-import com.example.weather_api.app.utils.observeEventFlow
-import com.example.weather_api.app.utils.observeFlow
 import com.example.weather_api.core_data.EmptyFieldException
 import com.example.weather_api.databinding.FragmentWeatherBinding
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WeatherFragment : Fragment(R.layout.fragment_weather) {
@@ -78,32 +77,24 @@ class WeatherFragment : Fragment(R.layout.fragment_weather) {
     }
 
     private fun observeEvents() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.showErrorMessageResEvent.observeEventFlow(viewLifecycleOwner.lifecycle) {
-                it?.let {
-                    Toast.makeText(requireContext(), getString(it), Toast.LENGTH_SHORT).show()
-                }
-            }
+        collectEventFlow(viewModel.showErrorMessageResEvent) { massage ->
+            Toast.makeText(requireContext(), getString(massage), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun observeMainState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.mainWeatherState.observeFlow(viewLifecycleOwner.lifecycle) { mainWeatherState ->
-                mainWeatherState?.let {
-                    setAirState(mainWeatherState.airState)
-                    setWeatherState(mainWeatherState.weatherState)
-                    binding.refreshLayout.isRefreshing = mainWeatherState.refreshState
-                    adapter.weatherList = mainWeatherState.forecastState
-                    with(binding) {
-                        cityEditText.error =
-                            if (mainWeatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
-                        cityTextInput.isEnabled = mainWeatherState.enableViews
-                        searchByCoordinatesImageView.isEnabled = mainWeatherState.enableViews
-                        progressBar.visibility =
-                            if (mainWeatherState.showProgress) View.VISIBLE else View.INVISIBLE
-                    }
-                }
+        collectFlow(viewModel.mainWeatherState) { mainWeatherState ->
+            setAirState(mainWeatherState.airState)
+            setWeatherState(mainWeatherState.weatherState)
+            binding.refreshLayout.isRefreshing = mainWeatherState.refreshState
+            adapter.weatherList = mainWeatherState.forecastState
+            with(binding) {
+                cityEditText.error =
+                    if (mainWeatherState.emptyCityError) getString(R.string.error_field_is_empty) else null
+                cityTextInput.isEnabled = mainWeatherState.enableViews
+                searchByCoordinatesImageView.isEnabled = mainWeatherState.enableViews
+                progressBar.visibility =
+                    if (mainWeatherState.showProgress) View.VISIBLE else View.INVISIBLE
             }
         }
     }
