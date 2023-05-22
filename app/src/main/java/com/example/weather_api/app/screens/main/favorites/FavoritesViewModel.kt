@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weather_api.app.model.FavoritesState
 import com.example.weather_api.app.utils.Event
 import com.example.weather_api.app.utils.safeLaunchAsync
-import com.example.weather_api.core_data.WeatherRepository
+import com.example.weather_api.core_data.WeatherRepositoryImpl
 import com.example.weather_api.core_data.mappers.toWeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository,
+    private val weatherRepository: WeatherRepositoryImpl,
 ) : ViewModel() {
 
     private val _showErrorMessageResEvent = MutableStateFlow<Event<Int?>>(Event(null))
