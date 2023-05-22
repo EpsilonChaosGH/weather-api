@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_api.app.model.ForecastState
 import com.example.weather_api.databinding.ItemWeatherForecastBinding
 
-
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
     class WeatherViewHolder(
         val binding: ItemWeatherForecastBinding

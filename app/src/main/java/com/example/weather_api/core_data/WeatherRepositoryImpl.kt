@@ -15,14 +15,14 @@ class WeatherRepositoryImpl @Inject constructor(
     private val weatherSource: WeatherSource,
     private val appDatabase: AppDatabase,
     private val ioDispatcher: CoroutineDispatcher
-) : WeatherRepository {
+) {
 
-    override suspend fun listenMainWeather(): Flow<MainWeatherEntity?> {
+    fun listenMainWeather(): Flow<MainWeatherEntity?> {
         return appDatabase.weatherDao().getCurrentWeatherFlow()
             .map { it?.toMainWeatherEntity() }
     }
 
-    override suspend fun listenFavoriteLocations(): Flow<List<MainWeatherEntity?>> {
+    fun listenFavoriteLocations(): Flow<List<MainWeatherEntity?>> {
         return appDatabase.weatherDao().getFavoritesFlow()
             .map { list ->
                 list.map {
@@ -31,7 +31,7 @@ class WeatherRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getMainWeatherByCity(city: String) = wrapBackendExceptions {
+    suspend fun getMainWeatherByCity(city: String) = wrapBackendExceptions {
         delay(1000)
         val weather = weatherSource.getWeatherByCity(city)
         val coordinates = Coordinates(lon = weather.lon, lat = weather.lat)
@@ -41,7 +41,7 @@ class WeatherRepositoryImpl @Inject constructor(
         setCurrentWeather(weather = weather, air = air, forecast = forecast)
     }
 
-    override suspend fun getMainWeatherByCoordinates(coordinates: Coordinates) =
+    suspend fun getMainWeatherByCoordinates(coordinates: Coordinates) =
         wrapBackendExceptions {
             delay(1000)
             val weather = weatherSource.getWeatherByCoordinates(coordinates)
@@ -51,16 +51,16 @@ class WeatherRepositoryImpl @Inject constructor(
             setCurrentWeather(weather = weather, air = air, forecast = forecast)
         }
 
-    override suspend fun refreshCurrentMainWeather() = wrapSQLiteException(ioDispatcher) {
+    suspend fun refreshCurrentMainWeather() = wrapSQLiteException(ioDispatcher) {
         getMainWeatherByCity(appDatabase.weatherDao().getCurrentCity())
     }
 
-    override suspend fun addToFavoritesByCity(city: String) = wrapSQLiteException(ioDispatcher) {
+    suspend fun addToFavoritesByCity(city: String) = wrapSQLiteException(ioDispatcher) {
         appDatabase.weatherDao()
             .updateFavorites(UpdateFavoritesTuple(city = city, isFavorites = true))
     }
 
-    override suspend fun deleteFromFavoritesByCity(city: String) =
+    suspend fun deleteFromFavoritesByCity(city: String) =
         wrapSQLiteException(ioDispatcher) {
             if (appDatabase.weatherDao().getCurrentCity() == city) {
                 appDatabase.weatherDao().updateFavorites(
@@ -71,7 +71,7 @@ class WeatherRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun refreshFavorites() = wrapSQLiteException(ioDispatcher) {
+    suspend fun refreshFavorites() = wrapSQLiteException(ioDispatcher) {
         val favoritesList = appDatabase.weatherDao().getFavoritesCity()
         val favoritesDef = mutableListOf<Deferred<MainWeatherEntity>>()
         favoritesList.map {
@@ -114,7 +114,7 @@ class WeatherRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun fromFavoritesMainWeatherToCurrent(city: String) =
+    suspend fun fromFavoritesMainWeatherToCurrent(city: String) =
         wrapSQLiteException(ioDispatcher) {
             appDatabase.weatherDao().setCurrentByCity(city)
         }

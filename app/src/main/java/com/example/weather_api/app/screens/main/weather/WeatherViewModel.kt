@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository,
+    private val weatherRepository: WeatherRepositoryImpl,
 ) : ViewModel() {
 
     private val _showErrorMessageResEvent = MutableStateFlow<Event<Int?>>(Event(null))
